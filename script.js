@@ -527,11 +527,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     firstScrollTrigger = ScrollTrigger.create({
                         trigger: firstSection,
-                        start: isMobile ? "top 95%" : "top 90%",
+                        start: isMobile ? "top 98%" : "top 90%",
                         end: () => `top+=${centerOffset}px center`,
                         scrub: isMobile ? 0.3 : 0.5, // Valores menores = mais responsivo ao scroll
-                markers: false,
-                        animation: scrollTL
+                        markers: false,
+                        animation: scrollTL,
+                        invalidateOnRefresh: true,
+                        preventOverlaps: true // Prevenir sobreposição com próximo slide
                     });
                 }
             });
@@ -684,13 +686,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Timeline - centralizado considerando o header
+        // NO MOBILE: Ajustar start e end para evitar sobreposição e loops
+        const startValue = isMobile ? "top 98%" : "top 90%";
+        const endValue = isMobile 
+            ? () => `top+=${centerOffset + (index * 50)}px center` // Adicionar offset progressivo no mobile
+            : () => `top+=${centerOffset}px center`;
+        
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: section,
-                start: isMobile ? "top 95%" : "top 90%",
-                end: () => `top+=${centerOffset}px center`, // Centraliza considerando a parte de baixo do header
-                scrub: isMobile ? 0.8 : 0.6, // Mobile mais suave para deixar mais evidente
-                markers: false
+                start: startValue,
+                end: endValue,
+                scrub: isMobile ? 0.5 : 0.6, // Reduzir scrub no mobile para evitar loops
+                markers: false,
+                invalidateOnRefresh: true, // Recalcular quando a página redimensionar
+                preventOverlaps: true // Prevenir sobreposição de triggers
             }
         });
         
