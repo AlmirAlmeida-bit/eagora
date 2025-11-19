@@ -326,6 +326,16 @@ body[style] {
     margin-bottom: 0;
 }
 
+.panel h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 38px;
+    line-height: 1.2;
+    color: var(--color-highlight);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
 .panel-text-item .text-link {
     color: var(--color-highlight);
     text-decoration: underline;
@@ -335,6 +345,58 @@ body[style] {
 .panel-text-item .text-link:hover {
     color: var(--color-action);
     text-decoration: none;
+}
+
+/* AJUSTES ESPECÍFICOS PARA O SLIDE 1 */
+#section-1 .panel {
+    padding: 32px;
+}
+
+#section-1 .panel-content {
+    gap: 20px;
+}
+
+#section-1 .panel h2 {
+    font-size: 32px;
+    line-height: 1.15;
+}
+
+#section-1 .panel-visual-img {
+    max-width: 260px;
+    margin-left: -10px;
+}
+
+#section-1 .panel-text-frame {
+    padding: 16px;
+}
+
+#section-1 .panel-text-item {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+    #section-1 .panel {
+        padding: 24px;
+    }
+    
+    #section-1 .panel-content {
+        flex-direction: column;
+        gap: 18px;
+    }
+    
+    #section-1 .panel-visual-img {
+        max-width: 210px;
+        margin-left: 0;
+    }
+    
+    #section-1 .panel h2 {
+        font-size: 26px;
+    }
+    
+    #section-1 .panel-text-frame {
+        padding: 14px;
+    }
 }
 
 /* RESPONSIVO - TABLET */
