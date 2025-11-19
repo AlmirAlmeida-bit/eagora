@@ -1,11 +1,11 @@
 /* CONFIGURAÇÃO BASE */
 :root {
-    --color-danger: #0956F7; /* Vermelho/Ação */
-    --color-action: #0956F7; /* Verde/Sucesso */
+    --color-danger: #0956F7; /* Azul/Ação */
+    --color-action: #0956F7; /* Azul/Sucesso */
     --color-panel: #1e293b; /* Azul Escuro do Painel */
     --color-bg: #0f172a; /* Fundo Muito Escuro */
     --color-text-light: #ffffff;
-    --color-highlight: #ffffff; /* /Atenção */
+    --color-highlight: #ffffff; /* Branco/Atenção */
 }
 
 /* LOADING - ESTILO HQ */
