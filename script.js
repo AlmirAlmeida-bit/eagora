@@ -526,21 +526,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     // NO MOBILE: O trigger do slide 1 deve terminar ANTES do slide 2 começar
-                    // Slide 2 começa em "top 80%", então slide 1 deve terminar em "top 75%"
+                    // Slide 2 começa em "top 85%", então slide 1 deve terminar em "top 78%" (margem segura)
                     window.firstSlideTrigger = ScrollTrigger.create({
                         trigger: firstSection,
                         start: isMobile ? "top 98%" : "top 90%",
-                        end: isMobile ? "top 75%" : () => `top+=${centerOffset}px center`, // No mobile, termina ANTES do slide 2 começar
+                        end: isMobile ? "top 78%" : () => `top+=${centerOffset}px center`, // No mobile, termina ANTES do slide 2 começar (margem de 7%)
                         scrub: isMobile ? 0.3 : 0.5,
                         markers: false,
                         animation: scrollTL,
                         invalidateOnRefresh: true,
                         preventOverlaps: true,
-                        // NO MOBILE: Matar o trigger quando sair completamente
+                        // NO MOBILE: Callbacks para sincronização perfeita
+                        onUpdate: (self) => {
+                            if (isMobile && window.firstSlideTrigger) {
+                                // Se chegou ao fim (100%), garantir que está no estado final
+                                if (self.progress >= 1) {
+                                    // Não fazer nada, apenas garantir que a animação está completa
+                                }
+                            }
+                        },
                         onLeave: () => {
-                            if (window.firstSlideTrigger && isMobile) {
-                                window.firstSlideTrigger.kill();
-                                window.firstSlideTrigger = null;
+                            // Quando sair do slide 1, garantir que está no estado final
+                            // O trigger será desabilitado pelo slide 2 quando ele entrar
+                            if (isMobile && window.firstSlideTrigger) {
+                                // Não fazer nada aqui - o slide 2 vai desabilitar quando necessário
+                                // Isso evita conflitos e garante sincronização perfeita
+                            }
+                        },
+                        onEnterBack: () => {
+                            // Quando voltar para o slide 1, garantir que está habilitado
+                            if (isMobile && window.firstSlideTrigger) {
+                                if (!window.firstSlideTrigger.isActive) {
+                                    window.firstSlideTrigger.enable();
+                                }
                             }
                         }
                     });
@@ -698,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // NO MOBILE: Ajustar start e end para evitar sobreposição e loops
         // Para o slide 2 (index === 1), garantir que o slide 1 já terminou completamente
         const startValue = isMobile 
-            ? (index === 1 ? "top 80%" : "top 98%") // Slide 2 começa DEPOIS que slide 1 terminou (75%)
+            ? (index === 1 ? "top 85%" : "top 98%") // Slide 2 começa DEPOIS que slide 1 terminou (78%) - margem de 7%
             : "top 90%";
         
         // NO MOBILE: End deve ser mais curto e específico para evitar sobreposição
@@ -706,22 +724,8 @@ document.addEventListener('DOMContentLoaded', function() {
             ? (index === 1 ? "bottom top" : () => `top+=${centerOffset + (index * 100)}px center`)
             : () => `top+=${centerOffset}px center`;
         
-        // NO MOBILE: Garantir que o trigger do slide 1 seja morto ANTES de criar o do slide 2
-        if (isMobile && index === 1) {
-            // Matar o trigger do slide 1 se ainda existir
-            if (window.firstSlideTrigger) {
-                window.firstSlideTrigger.kill();
-                window.firstSlideTrigger = null;
-            }
-            // Matar TODOS os triggers do slide 1 (por segurança)
-            ScrollTrigger.getAll().forEach(trigger => {
-                if (trigger.trigger === sections[0]) {
-                    trigger.kill();
-                }
-            });
-            // Refresh para garantir que as mudanças foram aplicadas
-            ScrollTrigger.refresh();
-        }
+        // NO MOBILE: Variável para rastrear estado do slide 2
+        let slide2Active = false;
         
         const tl = gsap.timeline({
             scrollTrigger: {
@@ -732,25 +736,58 @@ document.addEventListener('DOMContentLoaded', function() {
                 markers: false,
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
-                // NO MOBILE: Garantir que trigger anterior está morto quando este começar
+                // NO MOBILE: Sincronização perfeita - desabilitar trigger do slide 1 quando este começar
                 onEnter: () => {
                     if (isMobile && index === 1) {
-                        // Garantir que o trigger do slide 1 está morto
-                        if (window.firstSlideTrigger) {
-                            window.firstSlideTrigger.kill();
-                            window.firstSlideTrigger = null;
+                        slide2Active = true;
+                        // Desabilitar o trigger do slide 1 para evitar conflito
+                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
+                            window.firstSlideTrigger.disable();
                         }
-                        // Matar qualquer outro trigger do slide 1
+                        // Garantir que não há outros triggers do slide 1 ativos
                         ScrollTrigger.getAll().forEach(trigger => {
-                            if (trigger.trigger === sections[0] && trigger !== tl.scrollTrigger) {
-                                trigger.kill();
+                            if (trigger.trigger === sections[0] && trigger !== window.firstSlideTrigger && trigger.isActive) {
+                                trigger.disable();
                             }
                         });
                     }
                 },
+                onUpdate: (self) => {
+                    if (isMobile && index === 1) {
+                        // Durante a animação do slide 2, garantir que o slide 1 está desabilitado
+                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
+                            window.firstSlideTrigger.disable();
+                        }
+                    }
+                },
+                onLeave: () => {
+                    // Quando sair completamente do slide 2, reabilitar o trigger do slide 1
+                    if (isMobile && index === 1) {
+                        slide2Active = false;
+                        if (window.firstSlideTrigger && !window.firstSlideTrigger.isActive) {
+                            window.firstSlideTrigger.enable();
+                        }
+                    }
+                },
                 onLeaveBack: () => {
-                    // Se voltar para o slide anterior, não fazer nada
-                    // Isso evita loops ao voltar
+                    // Quando voltar para o slide 1, reabilitar o trigger do slide 1
+                    if (isMobile && index === 1) {
+                        slide2Active = false;
+                        if (window.firstSlideTrigger && !window.firstSlideTrigger.isActive) {
+                            window.firstSlideTrigger.enable();
+                        }
+                        // Refresh para garantir sincronização
+                        ScrollTrigger.refresh();
+                    }
+                },
+                onEnterBack: () => {
+                    // Quando voltar para o slide 2 vindo de baixo, desabilitar o trigger do slide 1 novamente
+                    if (isMobile && index === 1) {
+                        slide2Active = true;
+                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
+                            window.firstSlideTrigger.disable();
+                        }
+                    }
                 }
             }
         });
