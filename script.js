@@ -480,8 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     scrollTL.to(firstPanel, {
                         opacity: 1, 
                         y: 0,
-                        duration: isMobile ? 1 : 1.2,
-                        ease: "power2.inOut"
+                        duration: isMobile ? 1.2 : 1.4,
+                        ease: isMobile ? "power3.out" : "power2.inOut" // Easing mais suave no mobile
                     }, 0);
                     
                     if (firstIcon) {
@@ -489,18 +489,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 opacity: 1, 
                             scale: 1,
                             y: 0,
-                            duration: isMobile ? 0.7 : 0.9,
-                            ease: "sine.inOut"
-                        }, isMobile ? 0.2 : 0.25);
+                            duration: isMobile ? 0.9 : 1.1,
+                            ease: isMobile ? "back.out(1.4)" : "sine.inOut" // Easing mais suave
+                        }, isMobile ? 0.25 : 0.3);
                     }
                     
                     if (firstDialogue) {
                         scrollTL.to(firstDialogue, {
                 opacity: 1, 
                             y: 0,
-                            duration: isMobile ? 0.7 : 0.9,
-                            ease: "power1.inOut"
-                        }, isMobile ? 0.15 : 0.2);
+                            duration: isMobile ? 0.9 : 1.1,
+                            ease: isMobile ? "power2.out" : "power1.inOut" // Easing mais suave
+                        }, isMobile ? 0.2 : 0.25);
                     }
                     
                     if (firstImage) {
@@ -509,9 +509,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             scale: 1,
                             rotation: 0,
                             y: 0,
-                            duration: isMobile ? 0.8 : 1,
-                            ease: "elastic.out(1, 0.5)"
-                        }, isMobile ? 0.1 : 0.15);
+                            duration: isMobile ? 1.0 : 1.2,
+                            ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
+                        }, isMobile ? 0.15 : 0.2);
                     }
                     
                     if (firstTextFrame) {
@@ -520,64 +520,41 @@ document.addEventListener('DOMContentLoaded', function() {
                             scale: 1,
                             x: 0,
                             y: 0,
-                            duration: isMobile ? 0.8 : 1,
-                            ease: "elastic.out(1, 0.5)"
-                        }, isMobile ? 0.12 : 0.18);
+                            duration: isMobile ? 1.0 : 1.2,
+                            ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
+                        }, isMobile ? 0.18 : 0.22);
                     }
                     
-                    // NO MOBILE: O trigger do slide 1 deve terminar ANTES do slide 2 começar
-                    // Slide 2 começa em "top 85%", então slide 1 deve terminar em "top 78%" (margem segura)
+                    // NO MOBILE: Estratégia completamente diferente - slide 1 termina MUITO ANTES do slide 2
+                    // Slide 1 termina em "top 70%" e slide 2 começa em "top 90%" - margem de 20% para evitar qualquer conflito
                     window.firstSlideTrigger = ScrollTrigger.create({
                         trigger: firstSection,
                         start: isMobile ? "top 98%" : "top 90%",
-                        end: isMobile ? "top 78%" : () => `top+=${centerOffset}px center`, // No mobile, termina ANTES do slide 2 começar (margem de 7%)
-                        scrub: isMobile ? 0.3 : 0.5,
+                        end: isMobile ? "top 70%" : () => `top+=${centerOffset}px center`, // No mobile, termina MUITO ANTES (margem de 20%)
+                        scrub: isMobile ? 0.4 : 0.5, // Scrub um pouco mais suave no mobile
                         markers: false,
                         animation: scrollTL,
                         invalidateOnRefresh: true,
                         preventOverlaps: true,
-                        // NO MOBILE: Callbacks para sincronização perfeita
-                        onUpdate: (self) => {
-                            if (isMobile && window.firstSlideTrigger) {
-                                // Se chegou ao fim (100%), garantir que está no estado final
-                                if (self.progress >= 1) {
-                                    // Não fazer nada, apenas garantir que a animação está completa
-                                }
-                            }
-                        },
-                        onLeave: () => {
-                            // Quando sair do slide 1, garantir que está no estado final
-                            // O trigger será desabilitado pelo slide 2 quando ele entrar
-                            if (isMobile && window.firstSlideTrigger) {
-                                // Não fazer nada aqui - o slide 2 vai desabilitar quando necessário
-                                // Isso evita conflitos e garante sincronização perfeita
-                            }
-                        },
-                        onEnterBack: () => {
-                            // Quando voltar para o slide 1, garantir que está habilitado
-                            if (isMobile && window.firstSlideTrigger) {
-                                if (!window.firstSlideTrigger.isActive) {
-                                    window.firstSlideTrigger.enable();
-                                }
-                            }
-                        }
+                        // NO MOBILE: Simplificar - sem callbacks complexos que podem causar conflitos
+                        // O trigger simplesmente termina antes do slide 2 começar
                     });
                 }
             });
             
-            // Painel cai e aparece - easing melhorado e mais rápido
+            // Painel cai e aparece - easing melhorado e mais suave
             initialFallTL.fromTo(firstPanel, 
                 { y: initialY, opacity: 0, zIndex: 10 },
                 {
                     y: 0,
                     opacity: 1,
-                    duration: isMobile ? 0.8 : 1.0,
-                    ease: isMobile ? "power4.out" : "expo.out"
+                    duration: isMobile ? 1.0 : 1.2,
+                    ease: isMobile ? "power3.out" : "expo.out" // Easing mais suave
                 }, 
                 0
             );
             
-            // Ícone aparece durante a queda - com bounce mais pronunciado
+            // Ícone aparece durante a queda - com bounce mais suave
             if (firstIcon) {
                 initialFallTL.fromTo(firstIcon,
                     { opacity: 0, scale: 0.5, y: initialY + (isMobile ? 10 : 20) },
@@ -585,10 +562,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     opacity: 1,
                     scale: 1,
                         y: 0,
-                        duration: isMobile ? 0.7 : 0.85,
-                        ease: isMobile ? "back.out(1.5)" : "back.out(1.8)"
+                        duration: isMobile ? 0.85 : 1.0,
+                        ease: isMobile ? "back.out(1.3)" : "back.out(1.8)" // Easing mais suave
                     },
-                    isMobile ? 0.3 : 0.4
+                    isMobile ? 0.35 : 0.45
                 );
             }
             
@@ -599,10 +576,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     opacity: 1,
                     y: 0,
-                    duration: isMobile ? 0.7 : 0.85,
-                    ease: "power3.out"
+                    duration: isMobile ? 0.85 : 1.0,
+                    ease: isMobile ? "power2.out" : "power3.out" // Easing mais suave
                 },
-                    isMobile ? 0.25 : 0.35
+                    isMobile ? 0.3 : 0.4
                 );
             }
             
@@ -614,14 +591,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         scale: 1.08,
                         rotation: 0,
                         y: 0,
-                        duration: isMobile ? 0.75 : 0.9,
-                        ease: "elastic.out(1, 0.5)"
+                        duration: isMobile ? 0.9 : 1.1,
+                        ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
                     },
-                    isMobile ? 0.25 : 0.3
+                    isMobile ? 0.3 : 0.35
                 ).to(firstImage, {
                     scale: 1,
-                    duration: 0.15,
-                    ease: "power3.out"
+                    duration: isMobile ? 0.2 : 0.15,
+                    ease: "power2.out" // Easing mais suave
                 }, ">-0.1");
             }
             
@@ -634,14 +611,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         scale: 1.05,
                         y: 0,
                         x: 0,
-                        duration: isMobile ? 0.75 : 0.9,
-                        ease: "elastic.out(1, 0.55)"
+                        duration: isMobile ? 0.9 : 1.1,
+                        ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.55)" // Easing mais suave
                     },
-                    isMobile ? 0.3 : 0.35
+                    isMobile ? 0.35 : 0.4
                 ).to(firstTextFrame, {
                     scale: 1,
-                    duration: 0.15,
-                    ease: "power3.out"
+                    duration: isMobile ? 0.2 : 0.15,
+                    ease: "power2.out" // Easing mais suave
                 }, ">-0.1");
             }
                 }, 100); // Delay de 100ms após requestAnimationFrame
@@ -713,10 +690,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Timeline - centralizado considerando o header
-        // NO MOBILE: Ajustar start e end para evitar sobreposição e loops
-        // Para o slide 2 (index === 1), garantir que o slide 1 já terminou completamente
+        // NO MOBILE: Estratégia simplificada - slide 2 começa MUITO DEPOIS do slide 1 terminar
+        // Slide 1 termina em "top 70%", então slide 2 começa em "top 90%" - margem de 20% para evitar qualquer conflito
         const startValue = isMobile 
-            ? (index === 1 ? "top 85%" : "top 98%") // Slide 2 começa DEPOIS que slide 1 terminou (78%) - margem de 7%
+            ? (index === 1 ? "top 90%" : "top 98%") // Slide 2 começa MUITO DEPOIS que slide 1 terminou (70%) - margem de 20%
             : "top 90%";
         
         // NO MOBILE: End deve ser mais curto e específico para evitar sobreposição
@@ -724,113 +701,59 @@ document.addEventListener('DOMContentLoaded', function() {
             ? (index === 1 ? "bottom top" : () => `top+=${centerOffset + (index * 100)}px center`)
             : () => `top+=${centerOffset}px center`;
         
-        // NO MOBILE: Variável para rastrear estado do slide 2
-        let slide2Active = false;
-        
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: section,
                 start: startValue,
                 end: endValue,
-                scrub: isMobile ? (index === 1 ? 0.3 : 0.5) : 0.6, // Slide 2 com scrub normal
+                scrub: isMobile ? (index === 1 ? 0.4 : 0.5) : 0.6, // Scrub mais suave no mobile
                 markers: false,
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
-                // NO MOBILE: Sincronização perfeita - desabilitar trigger do slide 1 quando este começar
-                onEnter: () => {
-                    if (isMobile && index === 1) {
-                        slide2Active = true;
-                        // Desabilitar o trigger do slide 1 para evitar conflito
-                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
-                            window.firstSlideTrigger.disable();
-                        }
-                        // Garantir que não há outros triggers do slide 1 ativos
-                        ScrollTrigger.getAll().forEach(trigger => {
-                            if (trigger.trigger === sections[0] && trigger !== window.firstSlideTrigger && trigger.isActive) {
-                                trigger.disable();
-                            }
-                        });
-                    }
-                },
-                onUpdate: (self) => {
-                    if (isMobile && index === 1) {
-                        // Durante a animação do slide 2, garantir que o slide 1 está desabilitado
-                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
-                            window.firstSlideTrigger.disable();
-                        }
-                    }
-                },
-                onLeave: () => {
-                    // Quando sair completamente do slide 2, reabilitar o trigger do slide 1
-                    if (isMobile && index === 1) {
-                        slide2Active = false;
-                        if (window.firstSlideTrigger && !window.firstSlideTrigger.isActive) {
-                            window.firstSlideTrigger.enable();
-                        }
-                    }
-                },
-                onLeaveBack: () => {
-                    // Quando voltar para o slide 1, reabilitar o trigger do slide 1
-                    if (isMobile && index === 1) {
-                        slide2Active = false;
-                        if (window.firstSlideTrigger && !window.firstSlideTrigger.isActive) {
-                            window.firstSlideTrigger.enable();
-                        }
-                        // Refresh para garantir sincronização
-                        ScrollTrigger.refresh();
-                    }
-                },
-                onEnterBack: () => {
-                    // Quando voltar para o slide 2 vindo de baixo, desabilitar o trigger do slide 1 novamente
-                    if (isMobile && index === 1) {
-                        slide2Active = true;
-                        if (window.firstSlideTrigger && window.firstSlideTrigger.isActive) {
-                            window.firstSlideTrigger.disable();
-                        }
-                    }
-                }
+                // NO MOBILE: Simplificar completamente - sem callbacks que podem causar conflitos
+                // A margem de 20% entre os triggers garante que não há sobreposição
             }
         });
         
         // Painel desliza e aparece - mobile mais suave e evidente
-        const panelDuration = isMobile ? (1.4 + (index - 1) * 0.15) : 1.0; // Mobile mais lento para ser mais evidente
+        const panelDuration = isMobile ? (1.5 + (index - 1) * 0.15) : 1.2; // Mobile mais lento para ser mais evidente
         tl.to(panel, {
             x: 0,
             opacity: 1,
             rotation: 0,
             scale: 1,
             duration: panelDuration,
-            ease: isMobile ? "power3.out" : "expo.out" // Mobile com easing mais suave
+            ease: isMobile ? "power2.out" : "expo.out" // Mobile com easing mais suave
         }, 0);
         
         // Ícone aparece durante o deslize - mobile mais suave
         if (icon) {
-            const iconStartTime = isMobile ? (0.3 + (index - 1) * 0.08) : 0.3;
-            const iconBounce = isMobile ? (1.5 + (index - 1) * 0.12) : 1.5;
+            const iconStartTime = isMobile ? (0.35 + (index - 1) * 0.08) : 0.3;
+            const iconBounce = isMobile ? (1.3 + (index - 1) * 0.1) : 1.5;
             tl.to(icon, {
                 opacity: 1,
                 scale: 1,
                 y: 0,
-                duration: isMobile ? (1.0 + (index - 1) * 0.1) : 0.85, // Mobile mais lento
-                ease: isMobile ? `back.out(${iconBounce})` : "back.out(1.5)"
+                duration: isMobile ? (1.1 + (index - 1) * 0.1) : 0.95, // Mobile mais lento
+                ease: isMobile ? `back.out(${iconBounce})` : "back.out(1.5)" // Easing mais suave
             }, iconStartTime);
         }
         
         // Diálogo aparece sincronizado - mobile mais suave
         if (dialogue) {
-            const dialogueStartTime = isMobile ? (0.25 + (index - 1) * 0.08) : 0.25;
+            const dialogueStartTime = isMobile ? (0.3 + (index - 1) * 0.08) : 0.25;
             tl.to(dialogue, {
                 opacity: 1,
                 y: 0,
-                duration: isMobile ? (1.0 + (index - 1) * 0.1) : 0.85, // Mobile mais lento
-                ease: isMobile ? "power2.out" : "power3.out" // Mobile com easing mais suave
+                duration: isMobile ? (1.1 + (index - 1) * 0.1) : 0.95, // Mobile mais lento
+                ease: isMobile ? "power1.out" : "power3.out" // Mobile com easing mais suave
             }, dialogueStartTime);
         }
         
         // Imagem aparece com efeito pipoca sincronizado - mobile mais suave e evidente
         if (image) {
-            const imageStartTime = isMobile ? (0.35 + (index - 1) * 0.1) : 0.35;
-            const imageBounce = isMobile ? 0.5 : 0.4; // Mobile com bounce mais suave
+            const imageStartTime = isMobile ? (0.4 + (index - 1) * 0.1) : 0.35;
+            const imageBounce = isMobile ? 0.6 : 0.5; // Mobile com bounce mais suave
             tl.fromTo(image,
                 { opacity: 0, scale: 0.2, y: isMobile ? (35 + (index - 1) * 5) : 60, rotation: slideFromLeft ? -12 : 12, x: fromX * 0.4 },
                 {
@@ -839,21 +762,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     rotation: 0,
                     y: 0,
                     x: 0,
-                    duration: isMobile ? (1.3 + (index - 1) * 0.12) : 1.2, // Mobile mais lento
-                    ease: `elastic.out(1, ${imageBounce})`
+                    duration: isMobile ? (1.4 + (index - 1) * 0.12) : 1.3, // Mobile mais lento
+                    ease: `elastic.out(1, ${imageBounce})` // Easing mais suave
                 },
                 imageStartTime
             ).to(image, {
                 scale: 1,
-                duration: isMobile ? 0.4 : 0.3, // Mobile mais lento no ajuste final
-                ease: "power2.out"
+                duration: isMobile ? 0.5 : 0.35, // Mobile mais lento no ajuste final
+                ease: "power1.out" // Easing mais suave
             }, ">-0.15");
         }
         
         // Texto aparece com efeito pipoca sincronizado - mobile mais suave
         if (textFrame) {
-            const textStartTime = isMobile ? (0.4 + (index - 1) * 0.1) : 0.4;
-            const textBounce = isMobile ? 0.6 : 0.5; // Mobile com bounce mais suave
+            const textStartTime = isMobile ? (0.45 + (index - 1) * 0.1) : 0.4;
+            const textBounce = isMobile ? 0.7 : 0.6; // Mobile com bounce mais suave
             tl.fromTo(textFrame,
                 { opacity: 0, scale: 0.8, y: isMobile ? (30 + (index - 1) * 5) : 50, x: slideFromLeft ? -30 : 30 },
                 {
@@ -861,14 +784,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     scale: 1.05,
                     y: 0,
                     x: 0,
-                    duration: isMobile ? (1.1 + (index - 1) * 0.1) : 1.0, // Mobile mais lento
-                    ease: `elastic.out(1, ${textBounce})`
+                    duration: isMobile ? (1.2 + (index - 1) * 0.1) : 1.1, // Mobile mais lento
+                    ease: `elastic.out(1, ${textBounce})` // Easing mais suave
                 },
                 textStartTime
             ).to(textFrame, {
                 scale: 1,
-                duration: isMobile ? 0.25 : 0.15, // Mobile mais lento no ajuste final
-                ease: "power2.out"
+                duration: isMobile ? 0.3 : 0.2, // Mobile mais lento no ajuste final
+                ease: "power1.out" // Easing mais suave
             }, ">-0.12");
         }
     });
