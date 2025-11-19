@@ -424,205 +424,244 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstTextFrame = firstSection ? firstSection.querySelector('.panel-text-frame') : null;
         
         if (firstPanel && firstSection) {
+            // CORREÇÃO 1: Verificar se já existe um trigger e matá-lo antes de criar um novo
+            if (window.firstSlideTrigger) {
+                window.firstSlideTrigger.kill();
+                window.firstSlideTrigger = null;
+            }
+            
             // Tornar a seção visível agora
             gsap.set(firstSection, { opacity: 1, visibility: "visible" });
             
-            // Calcular posição inicial (atrás do header) - negativo para começar acima
-            const initialY = -(headerHeight + (isMobile ? 50 : 100));
-            
-            // Estado inicial do primeiro slide - começa atrás do header
+            // Estado inicial - EFEITO PIPOCA CRESCENTE
+            // Todos os elementos começam pequenos e aparecem com efeito de pipoca
+            // IMPORTANTE: Garantir que o painel esteja visível e na posição correta
             gsap.set(firstPanel, { 
-                opacity: 0,
-                y: initialY,
+                opacity: 0.3, // Parcialmente visível para garantir que está na tela
+                scale: 0.5, // Tamanho suficiente para ser visível
+                rotation: isMobile ? -8 : -5,
+                x: 0, // Garantir posição correta
+                y: 0, // Garantir posição correta
                 visibility: "visible",
-                zIndex: 10 // Menor que o header (100/1000) para passar por trás
+                zIndex: 10
             });
             if (firstIcon) gsap.set(firstIcon, { 
                 opacity: 0, 
                 visibility: "visible",
-                scale: 0.5, 
-                y: initialY + (isMobile ? 10 : 20) 
+                scale: 0.1,
+                y: isMobile ? 20 : 30,
+                rotation: isMobile ? 15 : 10
             });
             if (firstDialogue) gsap.set(firstDialogue, { 
                 opacity: 0, 
                 visibility: "visible",
-                y: initialY + (isMobile ? 15 : 30) 
+                scale: 0.5,
+                y: isMobile ? 25 : 35
             });
             if (firstImage) gsap.set(firstImage, {
                 opacity: 0,
                 visibility: "visible",
-                scale: 0.4,
-                y: initialY + (isMobile ? 20 : 40),
-                rotation: -6
+                scale: 0.1,
+                y: isMobile ? 40 : 70,
+                rotation: isMobile ? -15 : -12
             });
             if (firstTextFrame) gsap.set(firstTextFrame, {
                 opacity: 0,
                 visibility: "visible",
-                scale: 0.8,
-                y: initialY + (isMobile ? 25 : 50),
-                x: 30
+                scale: 0.4,
+                y: isMobile ? 35 : 60,
+                x: isMobile ? 20 : 30
             });
             
-            // Variável global para armazenar o ScrollTrigger do primeiro slide
-            window.firstSlideTrigger = null;
+            // CORREÇÃO 2: Criar timeline para ScrollTrigger (pausada - será controlada pelo scroll)
+            const scrollTL = gsap.timeline({ paused: true });
             
-            // Animação inicial de "queda" ao carregar a página
-            // Usar requestAnimationFrame para garantir que execute após o layout
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    const initialFallTL = gsap.timeline({
-                        onComplete: () => {
-                    // Após a queda, resetar z-index para permitir scroll normal
-                    gsap.set(firstPanel, { zIndex: "auto" });
-                    
-                    // Agora criar o ScrollTrigger do primeiro slide (após a animação inicial)
-                    const scrollTL = gsap.timeline();
-                    scrollTL.to(firstPanel, {
-                        opacity: 1, 
-                        y: 0,
-                        duration: isMobile ? 1.2 : 1.4,
-                        ease: isMobile ? "power3.out" : "power2.inOut" // Easing mais suave no mobile
-                    }, 0);
-                    
-                    if (firstIcon) {
-                        scrollTL.to(firstIcon, {
-                opacity: 1, 
-                            scale: 1,
-                            y: 0,
-                            duration: isMobile ? 0.9 : 1.1,
-                            ease: isMobile ? "back.out(1.4)" : "sine.inOut" // Easing mais suave
-                        }, isMobile ? 0.25 : 0.3);
-                    }
-                    
-                    if (firstDialogue) {
-                        scrollTL.to(firstDialogue, {
-                opacity: 1, 
-                            y: 0,
-                            duration: isMobile ? 0.9 : 1.1,
-                            ease: isMobile ? "power2.out" : "power1.inOut" // Easing mais suave
-                        }, isMobile ? 0.2 : 0.25);
-                    }
-                    
-                    if (firstImage) {
-                        scrollTL.to(firstImage, {
-                            opacity: 1,
-                            scale: 1,
-                            rotation: 0,
-                            y: 0,
-                            duration: isMobile ? 1.0 : 1.2,
-                            ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
-                        }, isMobile ? 0.15 : 0.2);
-                    }
-                    
-                    if (firstTextFrame) {
-                        scrollTL.to(firstTextFrame, {
-                            opacity: 1,
-                            scale: 1,
-                            x: 0,
-                            y: 0,
-                            duration: isMobile ? 1.0 : 1.2,
-                            ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
-                        }, isMobile ? 0.18 : 0.22);
-                    }
-                    
-                    // NO MOBILE: Estratégia completamente diferente - slide 1 termina MUITO ANTES do slide 2
-                    // Slide 1 termina em "top 70%" e slide 2 começa em "top 90%" - margem de 20% para evitar qualquer conflito
-                    window.firstSlideTrigger = ScrollTrigger.create({
-                        trigger: firstSection,
-                        start: isMobile ? "top 98%" : "top 90%",
-                        end: isMobile ? "top 70%" : () => `top+=${centerOffset}px center`, // No mobile, termina MUITO ANTES (margem de 20%)
-                        scrub: isMobile ? 0.4 : 0.5, // Scrub um pouco mais suave no mobile
-                        markers: false,
-                        animation: scrollTL,
-                        invalidateOnRefresh: true,
-                        preventOverlaps: true,
-                        // NO MOBILE: Simplificar - sem callbacks complexos que podem causar conflitos
-                        // O trigger simplesmente termina antes do slide 2 começar
-                    });
-                }
-            });
+            // Adicionar todas as animações na timeline do scroll - EFEITO PIPOCA CRESCENTE
+            // Easing melhorado: mais suave e natural
+            const panelDuration = isMobile ? 1.2 : 1.0;
+            scrollTL.to(firstPanel, {
+                opacity: 1,
+                scale: 1.12,
+                rotation: 0,
+                duration: panelDuration,
+                ease: "elastic.out(1, 0.7)" // Easing mais suave
+            }, 0).to(firstPanel, {
+                scale: 1,
+                duration: isMobile ? 0.35 : 0.3,
+                ease: "power1.out" // Easing mais suave para normalização
+            }, ">-0.1");
             
-            // Painel cai e aparece - easing melhorado e mais suave
-            initialFallTL.fromTo(firstPanel, 
-                { y: initialY, opacity: 0, zIndex: 10 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    duration: isMobile ? 1.0 : 1.2,
-                    ease: isMobile ? "power3.out" : "expo.out" // Easing mais suave
-                }, 
-                0
-            );
-            
-            // Ícone aparece durante a queda - com bounce mais suave
             if (firstIcon) {
-                initialFallTL.fromTo(firstIcon,
-                    { opacity: 0, scale: 0.5, y: initialY + (isMobile ? 10 : 20) },
-                {
+                const iconStartTime = isMobile ? 0.2 : 0.15;
+                scrollTL.to(firstIcon, {
                     opacity: 1,
+                    scale: 1.18,
+                    y: 0,
+                    rotation: 0,
+                    duration: isMobile ? 0.95 : 0.85,
+                    ease: "back.out(1.4)" // Easing mais suave com bounce sutil
+                }, iconStartTime).to(firstIcon, {
                     scale: 1,
-                        y: 0,
-                        duration: isMobile ? 0.85 : 1.0,
-                        ease: isMobile ? "back.out(1.3)" : "back.out(1.8)" // Easing mais suave
-                    },
-                    isMobile ? 0.35 : 0.45
-                );
+                    duration: isMobile ? 0.3 : 0.25,
+                    ease: "power1.out" // Easing mais suave
+                }, ">-0.1");
             }
             
-            // Diálogo aparece durante a queda - easing suave e natural
             if (firstDialogue) {
-                initialFallTL.fromTo(firstDialogue,
-                    { opacity: 0, y: initialY + (isMobile ? 15 : 30) },
-                {
+                const dialogueStartTime = isMobile ? 0.25 : 0.2;
+                scrollTL.to(firstDialogue, {
                     opacity: 1,
+                    scale: 1.08,
                     y: 0,
-                    duration: isMobile ? 0.85 : 1.0,
-                    ease: isMobile ? "power2.out" : "power3.out" // Easing mais suave
-                },
-                    isMobile ? 0.3 : 0.4
-                );
+                    duration: isMobile ? 0.9 : 0.8,
+                    ease: "elastic.out(1, 0.75)" // Easing mais suave
+                }, dialogueStartTime).to(firstDialogue, {
+                    scale: 1,
+                    duration: isMobile ? 0.25 : 0.2,
+                    ease: "power1.out" // Easing mais suave
+                }, ">-0.1");
             }
             
             if (firstImage) {
-                initialFallTL.fromTo(firstImage,
-                    { opacity: 0, scale: 0.4, y: initialY + (isMobile ? 20 : 40), rotation: -6 },
-                    {
-                        opacity: 1,
-                        scale: 1.08,
-                        rotation: 0,
-                        y: 0,
-                        duration: isMobile ? 0.9 : 1.1,
-                        ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.5)" // Easing mais suave
-                    },
-                    isMobile ? 0.3 : 0.35
-                ).to(firstImage, {
+                const imageStartTime = isMobile ? 0.3 : 0.25;
+                scrollTL.to(firstImage, {
+                    opacity: 1,
+                    scale: 1.25,
+                    rotation: 0,
+                    y: 0,
+                    duration: isMobile ? 1.1 : 1.0,
+                    ease: "elastic.out(1, 0.6)" // Easing mais suave
+                }, imageStartTime).to(firstImage, {
                     scale: 1,
-                    duration: isMobile ? 0.2 : 0.15,
-                    ease: "power2.out" // Easing mais suave
+                    duration: isMobile ? 0.45 : 0.35,
+                    ease: "power1.out" // Easing mais suave para normalização
+                }, ">-0.15");
+            }
+            
+            if (firstTextFrame) {
+                const textStartTime = isMobile ? 0.35 : 0.3;
+                scrollTL.to(firstTextFrame, {
+                    opacity: 1,
+                    scale: 1.12,
+                    y: 0,
+                    x: 0,
+                    duration: isMobile ? 1.0 : 0.9,
+                    ease: "elastic.out(1, 0.7)" // Easing mais suave
+                }, textStartTime).to(firstTextFrame, {
+                    scale: 1,
+                    duration: isMobile ? 0.35 : 0.3,
+                    ease: "power1.out" // Easing mais suave
+                }, ">-0.12");
+            }
+            
+            // CORREÇÃO 3: Criar o ScrollTrigger ANTES da animação inicial
+            // Isso garante que o trigger esteja pronto quando o scroll começar
+            window.firstSlideTrigger = ScrollTrigger.create({
+                        trigger: firstSection,
+                start: isMobile ? "top 98%" : "top 90%",
+                end: isMobile ? "top 70%" : () => `top+=${centerOffset}px center`,
+                scrub: isMobile ? 0.4 : 0.5,
+                markers: false,
+                animation: scrollTL,
+                invalidateOnRefresh: true,
+                preventOverlaps: true
+            });
+            
+            // CORREÇÃO 4: Criar animação inicial SEPARADA - EFEITO PIPOCA CRESCENTE
+            // Esta animação executa IMEDIATAMENTE após o header terminar
+            // Resetar z-index imediatamente
+            gsap.set(firstPanel, { zIndex: "auto" });
+            
+            // Criar timeline separada para animação inicial - EFEITO PIPOCA CRESCENTE
+            // IMPORTANTE: Timeline executa automaticamente quando criada
+            const initialTL = gsap.timeline({
+                onComplete: () => {
+                    // Após animação inicial, definir a scrollTL como completa (progress 1)
+                    // Isso garante que quando o ScrollTrigger começar, ele já sabe que está no estado final
+                    // E pode fazer rewind corretamente quando o scroll voltar
+                    scrollTL.progress(1);
+                }
+            });
+            
+            // Painel aparece com efeito pipoca - EXECUTAR IMEDIATAMENTE
+            // Easing melhorado: mais suave e natural
+            initialTL.to(firstPanel, {
+                opacity: 1,
+                scale: 1.12,
+                rotation: 0,
+                duration: isMobile ? 1.1 : 1.0,
+                ease: "elastic.out(1, 0.7)" // Easing mais suave
+            }, 0).to(firstPanel, {
+                scale: 1,
+                duration: isMobile ? 0.35 : 0.3,
+                ease: "power1.out" // Easing mais suave para normalização
+            }, ">-0.1");
+            
+            // Ícone aparece com efeito pipoca crescente - easing melhorado
+            if (firstIcon) {
+                initialTL.to(firstIcon, {
+                    opacity: 1,
+                    scale: 1.18,
+                    y: 0,
+                    rotation: 0,
+                    duration: isMobile ? 0.95 : 0.85,
+                    ease: "back.out(1.4)" // Easing mais suave com bounce sutil
+                }, isMobile ? 0.2 : 0.15).to(firstIcon, {
+                    scale: 1,
+                    duration: isMobile ? 0.3 : 0.25,
+                    ease: "power1.out" // Easing mais suave
                 }, ">-0.1");
             }
             
-            // Texto aparece com efeito pipoca sincronizado
-            if (firstTextFrame) {
-                initialFallTL.fromTo(firstTextFrame,
-                    { opacity: 0, scale: 0.8, y: initialY + (isMobile ? 25 : 50), x: 30 },
-                    {
-                        opacity: 1,
-                        scale: 1.05,
-                        y: 0,
-                        x: 0,
-                        duration: isMobile ? 0.9 : 1.1,
-                        ease: isMobile ? "elastic.out(1, 0.6)" : "elastic.out(1, 0.55)" // Easing mais suave
-                    },
-                    isMobile ? 0.35 : 0.4
-                ).to(firstTextFrame, {
+            // Diálogo aparece com efeito pipoca crescente - easing melhorado
+            if (firstDialogue) {
+                initialTL.to(firstDialogue, {
+                    opacity: 1,
+                    scale: 1.08,
+                    y: 0,
+                    duration: isMobile ? 0.9 : 0.8,
+                    ease: "elastic.out(1, 0.75)" // Easing mais suave
+                }, isMobile ? 0.25 : 0.2).to(firstDialogue, {
                     scale: 1,
-                    duration: isMobile ? 0.2 : 0.15,
-                    ease: "power2.out" // Easing mais suave
+                    duration: isMobile ? 0.25 : 0.2,
+                    ease: "power1.out" // Easing mais suave
                 }, ">-0.1");
             }
-                }, 100); // Delay de 100ms após requestAnimationFrame
-            });
+            
+            // Imagem aparece com efeito pipoca crescente - easing melhorado
+            if (firstImage) {
+                initialTL.to(firstImage, {
+                    opacity: 1,
+                    scale: 1.25,
+                    rotation: 0,
+                    y: 0,
+                    duration: isMobile ? 1.1 : 1.0,
+                    ease: "elastic.out(1, 0.6)" // Easing mais suave
+                }, isMobile ? 0.3 : 0.25).to(firstImage, {
+                    scale: 1,
+                    duration: isMobile ? 0.45 : 0.35,
+                    ease: "power1.out" // Easing mais suave para normalização
+                }, ">-0.15");
+            }
+            
+            // Texto aparece com efeito pipoca crescente - easing melhorado
+            if (firstTextFrame) {
+                initialTL.to(firstTextFrame, {
+                    opacity: 1,
+                    scale: 1.12,
+                    y: 0,
+                    x: 0,
+                    duration: isMobile ? 1.0 : 0.9,
+                    ease: "elastic.out(1, 0.7)" // Easing mais suave
+                }, isMobile ? 0.35 : 0.3).to(firstTextFrame, {
+                    scale: 1,
+                    duration: isMobile ? 0.35 : 0.3,
+                    ease: "power1.out" // Easing mais suave
+                }, ">-0.12");
+            }
+            
+            // A timeline executa automaticamente quando criada
+            // Não é necessário chamar .play() pois a timeline já está ativa
         }
     }
     } // Fim da função startFirstSlideAnimation
