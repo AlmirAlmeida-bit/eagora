@@ -479,9 +479,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Adicionar todas as animações na timeline do scroll - EFEITO PIPOCA CRESCENTE
             // Easing melhorado: mais suave e natural
             const panelDuration = isMobile ? 1.2 : 1.0;
-            scrollTL.to(firstPanel, {
-                opacity: 1,
-                scale: 1.12,
+                    scrollTL.to(firstPanel, {
+                        opacity: 1, 
+                scale: 1.04,
                 rotation: 0,
                 duration: panelDuration,
                 ease: "elastic.out(1, 0.7)" // Easing mais suave
@@ -490,12 +490,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 duration: isMobile ? 0.35 : 0.3,
                 ease: "power1.out" // Easing mais suave para normalização
             }, ">-0.1");
-            
-            if (firstIcon) {
+                    
+                    if (firstIcon) {
                 const iconStartTime = isMobile ? 0.2 : 0.15;
-                scrollTL.to(firstIcon, {
-                    opacity: 1,
-                    scale: 1.18,
+                        scrollTL.to(firstIcon, {
+                opacity: 1, 
+                    scale: 1.08,
                     y: 0,
                     rotation: 0,
                     duration: isMobile ? 0.95 : 0.85,
@@ -505,13 +505,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     duration: isMobile ? 0.3 : 0.25,
                     ease: "power1.out" // Easing mais suave
                 }, ">-0.1");
-            }
-            
-            if (firstDialogue) {
+                    }
+                    
+                    if (firstDialogue) {
                 const dialogueStartTime = isMobile ? 0.25 : 0.2;
-                scrollTL.to(firstDialogue, {
-                    opacity: 1,
-                    scale: 1.08,
+                        scrollTL.to(firstDialogue, {
+                opacity: 1, 
+                    scale: 1.05,
                     y: 0,
                     duration: isMobile ? 0.9 : 0.8,
                     ease: "elastic.out(1, 0.75)" // Easing mais suave
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const imageStartTime = isMobile ? 0.3 : 0.25;
                 scrollTL.to(firstImage, {
                     opacity: 1,
-                    scale: 1.25,
+                    scale: 1.12,
                     rotation: 0,
                     y: 0,
                     duration: isMobile ? 1.1 : 1.0,
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textStartTime = isMobile ? 0.35 : 0.3;
                 scrollTL.to(firstTextFrame, {
                     opacity: 1,
-                    scale: 1.12,
+                    scale: 1.06,
                     y: 0,
                     x: 0,
                     duration: isMobile ? 1.0 : 0.9,
@@ -556,16 +556,27 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // CORREÇÃO 3: Criar o ScrollTrigger ANTES da animação inicial
             // Isso garante que o trigger esteja pronto quando o scroll começar
-            window.firstSlideTrigger = ScrollTrigger.create({
+            // Função para ativar o ScrollTrigger apenas depois da animação inicial
+            const activateFirstSlideScrollTrigger = () => {
+                if (window.firstSlideTrigger) {
+                    window.firstSlideTrigger.kill();
+                }
+                
+                scrollTL.pause().progress(0);
+                
+                window.firstSlideTrigger = ScrollTrigger.create({
                         trigger: firstSection,
-                start: isMobile ? "top 98%" : "top 90%",
-                end: isMobile ? "top 70%" : () => `top+=${centerOffset}px center`,
-                scrub: isMobile ? 0.4 : 0.5,
+                    start: isMobile ? "top 92%" : "top 85%",
+                    end: isMobile ? "+=220% center" : "+=200% center",
+                    scrub: isMobile ? 0.5 : 0.6,
                 markers: false,
-                animation: scrollTL,
-                invalidateOnRefresh: true,
-                preventOverlaps: true
-            });
+                    animation: scrollTL,
+                    invalidateOnRefresh: true,
+                    preventOverlaps: true
+                });
+                
+                ScrollTrigger.refresh();
+            };
             
             // CORREÇÃO 4: Criar animação inicial SEPARADA - EFEITO PIPOCA CRESCENTE
             // Esta animação executa IMEDIATAMENTE após o header terminar
@@ -576,10 +587,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // IMPORTANTE: Timeline executa automaticamente quando criada
             const initialTL = gsap.timeline({
                 onComplete: () => {
-                    // Após animação inicial, definir a scrollTL como completa (progress 1)
-                    // Isso garante que quando o ScrollTrigger começar, ele já sabe que está no estado final
-                    // E pode fazer rewind corretamente quando o scroll voltar
+                    // Garantir estado final antes de liberar o ScrollTrigger
                     scrollTL.progress(1);
+                    activateFirstSlideScrollTrigger();
                 }
             });
             
@@ -587,7 +597,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Easing melhorado: mais suave e natural
             initialTL.to(firstPanel, {
                 opacity: 1,
-                scale: 1.12,
+                scale: 1.04,
                 rotation: 0,
                 duration: isMobile ? 1.1 : 1.0,
                 ease: "elastic.out(1, 0.7)" // Easing mais suave
@@ -601,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (firstIcon) {
                 initialTL.to(firstIcon, {
                     opacity: 1,
-                    scale: 1.18,
+                    scale: 1.08,
                     y: 0,
                     rotation: 0,
                     duration: isMobile ? 0.95 : 0.85,
@@ -617,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (firstDialogue) {
                 initialTL.to(firstDialogue, {
                     opacity: 1,
-                    scale: 1.08,
+                    scale: 1.05,
                     y: 0,
                     duration: isMobile ? 0.9 : 0.8,
                     ease: "elastic.out(1, 0.75)" // Easing mais suave
@@ -632,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (firstImage) {
                 initialTL.to(firstImage, {
                     opacity: 1,
-                    scale: 1.25,
+                    scale: 1.12,
                     rotation: 0,
                     y: 0,
                     duration: isMobile ? 1.1 : 1.0,
@@ -648,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (firstTextFrame) {
                 initialTL.to(firstTextFrame, {
                     opacity: 1,
-                    scale: 1.12,
+                    scale: 1.06,
                     y: 0,
                     x: 0,
                     duration: isMobile ? 1.0 : 0.9,
