@@ -528,12 +528,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     firstScrollTrigger = ScrollTrigger.create({
                         trigger: firstSection,
                         start: isMobile ? "top 98%" : "top 90%",
-                        end: () => `top+=${centerOffset}px center`,
+                        end: isMobile ? "bottom top" : () => `top+=${centerOffset}px center`, // No mobile, termina quando sai da viewport
                         scrub: isMobile ? 0.3 : 0.5, // Valores menores = mais responsivo ao scroll
                         markers: false,
                         animation: scrollTL,
                         invalidateOnRefresh: true,
-                        preventOverlaps: true // Prevenir sobreposição com próximo slide
+                        preventOverlaps: true, // Prevenir sobreposição com próximo slide
+                        onLeave: () => {
+                            // Matar o trigger quando sair completamente da viewport
+                            if (firstScrollTrigger && isMobile) {
+                                setTimeout(() => {
+                                    if (firstScrollTrigger && firstScrollTrigger.isActive === false) {
+                                        firstScrollTrigger.kill();
+                                    }
+                                }, 100);
+                            }
+                        },
+                        onLeaveBack: () => {
+                            // Se voltar para o slide 1, garantir que está ativo
+                            if (firstScrollTrigger && isMobile) {
+                                firstScrollTrigger.refresh();
+                            }
+                        }
                     });
                 }
             });
@@ -687,20 +703,54 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Timeline - centralizado considerando o header
         // NO MOBILE: Ajustar start e end para evitar sobreposição e loops
-        const startValue = isMobile ? "top 98%" : "top 90%";
+        // Para o slide 2 (index === 1), garantir que o slide 1 já terminou completamente
+        const startValue = isMobile 
+            ? (index === 1 ? "top 80%" : "top 98%") // Slide 2 começa mais cedo para evitar loop
+            : "top 90%";
+        
+        // NO MOBILE: End deve ser mais curto e específico para evitar sobreposição
         const endValue = isMobile 
-            ? () => `top+=${centerOffset + (index * 50)}px center` // Adicionar offset progressivo no mobile
+            ? (index === 1 ? "bottom top" : () => `top+=${centerOffset + (index * 100)}px center`) // Slide 2 termina quando sai da viewport
             : () => `top+=${centerOffset}px center`;
+        
+        // NO MOBILE: Garantir que o trigger do slide 1 seja morto antes de criar o do slide 2
+        if (isMobile && index === 1) {
+            // Matar todos os triggers do slide 1 antes de criar o do slide 2
+            ScrollTrigger.getAll().forEach(trigger => {
+                if (trigger.trigger === sections[0]) {
+                    trigger.kill();
+                }
+            });
+            // Pequeno delay para garantir que o kill foi processado
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 50);
+        }
         
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: section,
                 start: startValue,
                 end: endValue,
-                scrub: isMobile ? 0.5 : 0.6, // Reduzir scrub no mobile para evitar loops
+                scrub: isMobile ? (index === 1 ? 0.2 : 0.5) : 0.6, // Slide 2 com scrub ainda menor
                 markers: false,
                 invalidateOnRefresh: true, // Recalcular quando a página redimensionar
-                preventOverlaps: true // Prevenir sobreposição de triggers
+                preventOverlaps: true, // Prevenir sobreposição de triggers
+                // NO MOBILE: Matar trigger anterior quando este começar (especialmente para slide 2)
+                onEnter: () => {
+                    if (isMobile && index === 1) {
+                        // Garantir que o trigger do slide 1 está morto
+                        ScrollTrigger.getAll().forEach(trigger => {
+                            if (trigger.trigger === sections[0] && trigger !== tl.scrollTrigger) {
+                                trigger.kill();
+                            }
+                        });
+                    }
+                },
+                onLeaveBack: () => {
+                    // Se voltar para o slide anterior, não fazer nada especial
+                    // Isso evita loops ao voltar
+                }
             }
         });
         
