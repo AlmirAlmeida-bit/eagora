@@ -217,7 +217,7 @@ body[style] {
     padding: 0 !important;
     margin: 0 !important;
     overflow-x: hidden !important;
-    overflow-y: hidden !important;
+    overflow-y: hidden !important; /* Body não tem scroll - apenas HTML */
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
@@ -241,6 +241,21 @@ body[style] {
     overflow: visible;
 }
 
+/* OCULTAR PRIMEIRO SLIDE INICIALMENTE - SERÁ MOSTRADO PELO JS */
+/* Removido !important para permitir que JS controle */
+#section-1 {
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+}
+
+/* OCULTAR TODOS OS SLIDES SEGUINTES INICIALMENTE - SERÃO MOSTRADOS QUANDO SCROLL FOR HABILITADO */
+.story-section:not(#section-1) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
 /* ESTILO DO PAINEL */
 .panel {
     min-height: 500px;
@@ -261,12 +276,44 @@ body[style] {
     margin: 0 auto;
 }
 
+/* Cores de fundo dos painéis (substituindo Tailwind) */
+.panel-bg-red {
+    background: linear-gradient(145deg, rgba(153, 27, 27, 0.1) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-yellow {
+    background: linear-gradient(145deg, rgba(133, 77, 14, 0.1) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-green {
+    background: linear-gradient(145deg, rgba(20, 83, 45, 0.1) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-green-2 {
+    background: linear-gradient(145deg, rgba(20, 83, 45, 0.2) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-blue {
+    background: linear-gradient(145deg, rgba(30, 58, 138, 0.2) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-gray {
+    background: linear-gradient(145deg, rgba(31, 41, 55, 0.2) 0%, var(--color-panel) 50%, #334155);
+}
+
+.panel-bg-red-2 {
+    background: linear-gradient(145deg, rgba(153, 27, 27, 0.2) 0%, var(--color-panel) 50%, #334155);
+}
+
 .panel-content {
     width: 100%;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 30px;
+    overflow: hidden; /* Prevenir overflow horizontal */
+    box-sizing: border-box;
 }
 
 .panel-content-intro {
@@ -280,6 +327,9 @@ body[style] {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden; /* Prevenir overflow horizontal */
 }
 
 .panel-visual-img {
@@ -386,8 +436,11 @@ body[style] {
     }
     
     #section-1 .panel-visual-img {
-        max-width: 210px;
-        margin-left: 0;
+        max-width: 85% !important; /* Reduzir no mobile */
+        width: auto;
+        margin-left: 0 !important;
+        margin-right: 0;
+        object-fit: contain;
     }
     
     #section-1 .panel h2 {
@@ -498,6 +551,10 @@ body[style] {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
 
     .panel-copy {
@@ -506,12 +563,26 @@ body[style] {
     }
 
     .panel-visual-img {
-        max-width: 280px;
-        margin-left: -20px;
+        max-width: 85% !important; /* Reduzir para evitar overflow */
+        width: auto;
+        height: auto;
+        margin-left: 0 !important; /* Remover margin negativo no mobile */
+        margin-right: 0;
+        object-fit: contain;
     }
 
     #section-3 .panel-visual-img {
-        max-width: 336px; /* 20% maior que 280px */
+        max-width: 90% !important; /* Section 3 um pouco maior mas ainda seguro */
+    }
+    
+    /* Garantir que panel-visual não cause overflow */
+    .panel-visual {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .panel-text-frame {
@@ -573,12 +644,26 @@ body[style] {
     }
 
     .panel-visual-img {
-        max-width: 240px;
-        margin-left: -10px;
+        max-width: 80% !important; /* Reduzir ainda mais em telas pequenas */
+        width: auto;
+        height: auto;
+        margin-left: 0 !important; /* Remover margin negativo */
+        margin-right: 0;
+        object-fit: contain;
     }
 
     #section-3 .panel-visual-img {
-        max-width: 288px; /* 20% maior que 240px */
+        max-width: 85% !important; /* Section 3 um pouco maior mas seguro */
+    }
+    
+    /* Garantir que panel-visual não cause overflow */
+    .panel-visual {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .panel-text-frame {
@@ -720,9 +805,9 @@ body[style] {
     margin: 0 auto;
     padding: 20px 20px;
     padding-top: 100px; /* Espaço reduzido para melhor centralização */
-    overflow: visible;
-    overflow-x: hidden;
-    overflow-y: visible;
+    overflow: hidden !important; /* SEM SCROLL - apenas HTML tem scroll */
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
     position: relative;
 }
 
@@ -848,8 +933,8 @@ body[style] {
     .hq-container {
         padding-top: 100px !important; /* Espaço ajustado para o header fixo no mobile (aumentado proporcionalmente) */
         overflow-x: hidden !important;
-        overflow-y: visible !important;
-        overflow: visible !important;
+        overflow-y: hidden !important; /* SEM SCROLL - apenas HTML tem scroll */
+        overflow: hidden !important;
         width: 100% !important;
         max-width: 100% !important;
     }
@@ -862,7 +947,7 @@ body[style] {
     html,
     html[style] {
         overflow-x: hidden !important;
-        overflow-y: auto !important;
+        overflow-y: auto !important; /* APENAS HTML TEM SCROLL */
         width: 100% !important;
         height: 100% !important;
     }
@@ -870,13 +955,26 @@ body[style] {
     body,
     body[style] {
         overflow-x: hidden !important;
-        overflow-y: hidden !important;
+        overflow-y: hidden !important; /* Body NÃO tem scroll */
         width: 100% !important;
         position: relative !important;
         height: auto !important;
         min-height: 100vh !important;
         padding: 0 !important;
         margin: 0 !important;
+    }
+    
+    /* GARANTIR QUE NENHUM ELEMENTO INTERMEDIÁRIO TENHA SCROLL */
+    .hq-container,
+    .hq-container * {
+        overflow-y: hidden !important;
+    }
+    
+    /* Garantir que HTML tenha scroll no mobile */
+    html,
+    html[style] {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
     
     /* Garantir que todos os elementos filhos não tenham scroll */
@@ -997,8 +1095,8 @@ body[style] {
     .hq-container {
         padding-top: 95px !important; /* Espaço ajustado para o header fixo no mobile pequeno (aumentado proporcionalmente) */
         overflow-x: hidden !important;
-        overflow-y: visible !important;
-        overflow: visible !important;
+        overflow-y: hidden !important; /* SEM SCROLL - apenas HTML tem scroll */
+        overflow: hidden !important;
     }
 }
 
@@ -1099,11 +1197,13 @@ body[style] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Mudado de center para flex-start para permitir movimento */
     width: 100%;
     min-height: 100vh;
     gap: 30px;
     padding: 40px 20px;
+    padding-top: 50vh; /* Centralizar verticalmente via padding */
+    position: relative;
 }
 
 .logo-final {
@@ -1112,6 +1212,8 @@ body[style] {
     height: auto;
     object-fit: contain;
     filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.5));
+    position: relative !important; /* Permitir movimento via transform */
+    transform: translateY(0); /* Resetar qualquer transform */
 }
 
 .frase-final {
@@ -1175,6 +1277,9 @@ body[style] {
     text-align: center;
     position: relative;
     z-index: 10;
+    opacity: 0 !important; /* Completamente oculto ao carregar */
+    visibility: hidden !important;
+    display: none !important; /* Não renderizar até aparecer */
 }
 
 .footer-text {
