@@ -4,23 +4,77 @@
 // Otimizado para mobile
 // ============================================
 
-// Aguardar GSAP estar carregado
+// Aguardar DOM e GSAP estarem carregados
 (function() {
     'use strict';
     
-    // Verificar se GSAP está disponível
-    if (typeof gsap === 'undefined') {
-        console.error('GSAP não está carregado!');
-        return;
+    // Função para inicializar quando tudo estiver pronto
+    let retryCount = 0;
+    const MAX_RETRIES = 50; // Tentar por até 5 segundos (50 * 100ms)
+    
+    function initializeApp() {
+        // Verificar se GSAP está disponível
+        if (typeof gsap === 'undefined') {
+            retryCount++;
+            if (retryCount < MAX_RETRIES) {
+                // Tentar novamente após um delay
+                setTimeout(initializeApp, 100);
+            } else {
+                console.error('GSAP não carregou após múltiplas tentativas!');
+                // Mostrar mensagem de erro ao usuário
+                if (document.body) {
+                    document.body.innerHTML = '<div style="padding: 20px; text-align: center; color: white; font-family: Arial; background: #1e293b; min-height: 100vh; display: flex; align-items: center; justify-content: center;">Erro ao carregar a aplicação. Por favor, recarregue a página.</div>';
+                }
+            }
+            return;
+        }
+        
+        // Registrar ScrollTrigger
+        if (typeof ScrollTrigger !== 'undefined') {
+            try {
+                gsap.registerPlugin(ScrollTrigger);
+            } catch (e) {
+                console.error('Erro ao registrar ScrollTrigger:', e);
+                retryCount++;
+                if (retryCount < MAX_RETRIES) {
+                    setTimeout(initializeApp, 100);
+                }
+                return;
+            }
+        } else {
+            retryCount++;
+            if (retryCount < MAX_RETRIES) {
+                // Tentar novamente após um delay
+                setTimeout(initializeApp, 100);
+            } else {
+                console.error('ScrollTrigger não carregou após múltiplas tentativas!');
+                if (document.body) {
+                    document.body.innerHTML = '<div style="padding: 20px; text-align: center; color: white; font-family: Arial; background: #1e293b; min-height: 100vh; display: flex; align-items: center; justify-content: center;">Erro ao carregar a aplicação. Por favor, recarregue a página.</div>';
+                }
+            }
+            return;
+        }
+        
+        // Resetar contador de tentativas
+        retryCount = 0;
+        
+        // Verificar se DOM está pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
     }
     
-    // Registrar ScrollTrigger
-    if (typeof ScrollTrigger !== 'undefined') {
-        gsap.registerPlugin(ScrollTrigger);
-                } else {
-        console.error('ScrollTrigger não está carregado!');
-        return;
-    }
+    // Função principal que inicia a aplicação
+    function startApp() {
+        // Verificar novamente se GSAP está disponível
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+            console.error('GSAP ou ScrollTrigger não estão disponíveis!');
+            return;
+        }
+        
+        // Continuar com o código original aqui
     
     // ============================================
     // CONFIGURAÇÕES GLOBAIS
@@ -1007,19 +1061,25 @@
         }, 250);
     });
     
-    // ============================================
-    // EXECUTAR QUANDO DOM ESTIVER PRONTO
-    // ============================================
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
+        // ============================================
+        // EXECUTAR QUANDO DOM ESTIVER PRONTO
+        // ============================================
+        // Inicializar aplicação
         init();
+        
+        // Garantir scroll no topo quando página carregar
+        window.addEventListener('load', () => {
+            scrollToTop();
+            setTimeout(scrollToTop, 100);
+        });
     }
     
-    // Garantir scroll no topo quando página carregar
-    window.addEventListener('load', () => {
-        scrollToTop();
-        setTimeout(scrollToTop, 100);
-    });
-    
+    // Inicializar quando tudo estiver pronto
+    if (document.readyState === 'loading') {
+        // DOM ainda carregando, aguardar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        // DOM já carregado, verificar GSAP
+        initializeApp();
+    }
 })();
