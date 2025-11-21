@@ -422,9 +422,9 @@
                 end: endValue,
                 // Scrub aumentado para reduzir crashes - mais suave no mobile
                 // Slide 2 (index 1) tem scrub maior para reduzir puxões ao voltar para slide 1
-                // Slide 3 (index 2) tem scrub ainda maior para suavizar mais a animação
+                // Slide 3 (index 2) tem scrub EXTREMAMENTE maior para suavizar EXTREMAMENTE mais a animação
                 scrub: mobile 
-                    ? (index === 2 ? 2.5 : (index === 1 ? 2.0 : 1.5)) // Slide 3 mais suave (2.5), Slide 2 (2.0), outros (1.5)
+                    ? (index === 2 ? 6.0 : (index === 1 ? 2.0 : 1.5)) // Slide 3 EXTREMAMENTE mais suave (6.0), Slide 2 (2.0), outros (1.5)
                     : 1.2,
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
@@ -447,12 +447,12 @@
         });
         
             // Painel - Duração simplificada para mobile
-            // Slide 3 com duração maior e easing mais suave
+            // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
             const panelDuration = mobile 
-                ? (index === 2 ? 1.3 : 1.0) // Slide 3: 1.3s (mais lento e suave)
+                ? (index === 2 ? 2.5 : 1.0) // Slide 3: 2.5s (EXTREMAMENTE mais lento e suave - era 1.8s)
                 : 0.8;
             const panelEase = mobile && index === 2 
-                ? 'elastic.out(1, 0.6)' // Slide 3: easing mais suave (0.6 ao invés de 0.4)
+                ? 'power2.out' // Slide 3: easing EXTREMAMENTE mais suave (power2.out ao invés de elastic)
                 : (mobile ? 'power2.out' : 'expo.out');
                 
         tl.to(panel, {
@@ -466,9 +466,9 @@
         
             // Imagem - SLIDE 3 MAIS EVIDENTE NO MOBILE
         if (image) {
-                // Sincronizar início: todos começam juntos ou muito próximos
+                // Sincronizar início: slide 3 começa bem depois para suavizar EXTREMAMENTE mais
                 const imageStartTime = mobile 
-                    ? (index === 2 ? 0.3 : 0.25) // Sincronizado: slide 3 em 0.3, outros em 0.25
+                    ? (index === 2 ? 0.5 : 0.25) // Slide 3: 0.5s (EXTREMAMENTE mais espaçado - era 0.4s), outros em 0.25
                     : 0.25; // Desktop também sincronizado
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
@@ -484,12 +484,12 @@
                     : fromX * 0.4;
                     
                 // Imagem - Duração simplificada
-                // Slide 3 com duração maior e easing mais suave
+                // Slide 3 com duração EXTREMAMENTE maior mas mantendo efeito de pipoca (elastic)
                 const imageDuration = mobile 
-                    ? (index === 2 ? 1.4 : 1.1) // Slide 3: 1.4s (mais lento e suave)
+                    ? (index === 2 ? 2.8 : 1.1) // Slide 3: 2.8s (EXTREMAMENTE mais lento e suave - era 2.0s)
                     : 0.9;
                 const imageEase = mobile && index === 2 
-                    ? 'elastic.out(1, 0.5)' // Slide 3: bounce mais suave (0.5 ao invés de 0.3)
+                    ? 'elastic.out(1, 0.5)' // Slide 3: efeito de pipoca mantido mas mais suave (0.5 para bounce suave)
                     : 'elastic.out(1, 0.6)';
                 const imageScale = mobile && index === 2 ? 1.4 : 1.2; // Slide 3: cresce MUITO mais (1.4)
                     
@@ -512,17 +512,17 @@
                 },
                 imageStartTime
             ).to(image, {
-                scale: 1,
-                duration: mobile && index === 2 ? 0.8 : (mobile ? 0.5 : 0.35), // Slide 3: mais lento e suave (0.8s)
+                scale: mobile && index === 2 ? 1.15 : 1, // Slide 3: não diminui tanto (1.15 ao invés de 1)
+                duration: mobile && index === 2 ? 1.8 : (mobile ? 0.5 : 0.35), // Slide 3: EXTREMAMENTE mais lento e suave (1.8s - era 1.2s)
                 ease: 'power1.out'
             }, '>-0.15');
         }
             
             // Texto - SLIDE 3 MAIS EVIDENTE NO MOBILE
         if (textFrame) {
-                // Sincronizar início: começa junto com a imagem
+                // Sincronizar início: slide 3 começa bem depois para suavizar EXTREMAMENTE mais
                 const textStartTime = mobile 
-                    ? (index === 2 ? 0.3 : 0.25) // Sincronizado: mesmo tempo da imagem
+                    ? (index === 2 ? 0.5 : 0.25) // Slide 3: 0.5s (EXTREMAMENTE mais espaçado - era 0.4s), outros em 0.25
                     : 0.25; // Desktop também sincronizado
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
@@ -535,10 +535,10 @@
                     : (slideFromLeft ? -30 : 30);
                     
                 // Texto - Duração simplificada
-                // Slide 3 com duração maior e bounce mais suave
-                const textBounce = mobile && index === 2 ? 0.6 : 0.7; // Slide 3: bounce mais suave (0.6 ao invés de 0.4)
+                // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
+                const textBounce = mobile && index === 2 ? 1.0 : 0.7; // Slide 3: bounce EXTREMAMENTE mais suave (1.0 ao invés de 0.8)
                 const textDuration = mobile 
-                    ? (index === 2 ? 1.2 : 1.0) // Slide 3: 1.2s (mais lento e suave)
+                    ? (index === 2 ? 2.2 : 1.0) // Slide 3: 2.2s (EXTREMAMENTE mais lento e suave - era 1.6s)
                     : 0.8;
                 const textScale = mobile && index === 2 ? 1.2 : 1.05; // Slide 3: cresce MUITO mais (1.2)
                     
@@ -560,7 +560,7 @@
                 textStartTime
             ).to(textFrame, {
                 scale: 1,
-                duration: mobile && index === 2 ? 0.6 : (mobile ? 0.3 : 0.2), // Slide 3: mais lento e suave (0.6s)
+                duration: mobile && index === 2 ? 1.5 : (mobile ? 0.3 : 0.2), // Slide 3: EXTREMAMENTE mais lento e suave (1.5s - era 1.0s)
                 ease: 'power1.out'
             }, '>-0.12');
         }
@@ -568,17 +568,17 @@
             // Diálogo
             // Diálogo - SLIDE 3 MAIS EVIDENTE NO MOBILE
             if (dialogue) {
-                // Sincronizar início: começa um pouco depois da imagem e texto para efeito cascata
+                // Sincronizar início: slide 3 começa MUITO depois para suavizar EXTREMAMENTE mais
                 const dialogueStartTime = mobile 
-                    ? (index === 2 ? 0.4 : 0.35) // Sincronizado: começa um pouco depois (efeito cascata)
+                    ? (index === 2 ? 0.8 : 0.35) // Slide 3: 0.8s (EXTREMAMENTE mais espaçado - era 0.6s), outros em 0.35
                     : 0.35; // Desktop também sincronizado
                 // Diálogo - Duração simplificada
-                // Slide 3 com duração maior e easing mais suave
+                // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
                 const dialogueDuration = mobile 
-                    ? (index === 2 ? 1.0 : 0.8) // Slide 3: 1.0s (mais lento e suave)
+                    ? (index === 2 ? 2.0 : 0.8) // Slide 3: 2.0s (EXTREMAMENTE mais lento e suave - era 1.4s)
                     : 0.7;
                 const dialogueEase = mobile && index === 2 
-                    ? 'elastic.out(1, 0.7)' // Slide 3: bounce mais suave (0.7 ao invés de 0.6)
+                    ? 'power2.out' // Slide 3: easing EXTREMAMENTE mais suave (power2.out ao invés de elastic)
                     : (mobile ? 'power1.out' : 'power3.out');
                 const dialogueFromY = mobile && index === 2 ? 35 : (mobile ? (20 + (index - 1) * 6) : 30);
                 
