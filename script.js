@@ -74,6 +74,9 @@
             return;
         }
         
+        // Aplicar Viewport Height Fix ANTES de tudo (sugestão do Gemini)
+        setTrueVHeight();
+        
         // Continuar com o código original aqui
     
     // ============================================
@@ -89,6 +92,15 @@
         window.scrollTo(0, 0);
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
+    }
+    
+    // ============================================
+    // VIEWPORT HEIGHT FIX PARA MOBILE
+    // ============================================
+    // Corrige problemas de altura no mobile causados pela barra de URL
+    function setTrueVHeight() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
     
     // ============================================
@@ -420,8 +432,22 @@
         
             if (!panel) return;
             
-            // Direção alternada
-        const slideFromLeft = index % 2 === 1;
+            // Direção alternada - MOBILE: alternar direita/esquerda a partir do slide 2
+            // Slide 2 (index 1): vem da direita (slideFromLeft = false)
+            // Slide 3 (index 2): vem da esquerda (slideFromLeft = true)
+            // Slide 4 (index 3): vem da direita (slideFromLeft = false)
+            // etc.
+            let slideFromLeft;
+            if (mobile) {
+                // No mobile, alternar a partir do slide 2 (index 1)
+                // index 1 (slide 2) = false (direita)
+                // index 2 (slide 3) = true (esquerda)
+                // index 3 (slide 4) = false (direita)
+                slideFromLeft = (index - 1) % 2 === 1; // Alterna: false, true, false, true...
+            } else {
+                // Desktop mantém comportamento original
+                slideFromLeft = index % 2 === 1;
+            }
         
             // Distância crescente no mobile - SLIDE 3 COM EFEITO LEQUE MUITO EVIDENTE
         let slideDistance;
@@ -507,32 +533,86 @@
                 });
             }
             
-            // Timeline com ScrollTrigger
-            const startValue = mobile 
-                ? (index === 1 ? 'top 90%' : 'top 98%')
-                : 'top 90%';
+            // Timeline com ScrollTrigger - Ajustado para centralizar slide com elementos carregados
+            // Start: quando o topo da seção toca o topo do viewport (começa a entrar)
+            const startValue = 'top bottom';
             
-            const endValue = mobile 
-                ? (index === 1 ? 'bottom top' : () => `top+=${headerHeight + (index * 100)}px center`)
-                : () => `top+=${headerHeight}px center`;
+            // End: quando o slide está centralizado (topo da seção no centro do viewport)
+            // Isso garante que a animação termine quando o slide estiver centralizado
+            const endValue = 'top center';
         
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: section,
                 start: startValue,
                 end: endValue,
+                    // Scrub ajustado para suavizar e garantir que animação complete quando slide centralizar
                     scrub: mobile 
-                        ? (index === 2 ? 0.3 : (index === 1 ? 0.4 : 0.5)) // Slide 3: scrub mais suave (mais evidente)
-                        : 0.6,
+                        ? (index === 2 ? 1.2 : 1.0) // Suave para garantir sincronização
+                        : 1.0, // Desktop também suave
                 invalidateOnRefresh: true,
-                    preventOverlaps: true
+                    preventOverlaps: true,
+                    // Adicionar onLeaveBack para forçar estado inicial ao rolar para cima (sugestão do Gemini)
+                    onLeaveBack: () => {
+                        // Forçar o estado inicial quando rolar para cima e sair da vista
+                        gsap.set(panel, { 
+                            x: fromX, 
+                            opacity: 0,
+                            rotation: mobile ? (slideFromLeft ? -rotationAmount : rotationAmount) : 0,
+                            scale: mobile ? scaleAmount : 1
+                        });
+                        if (image) {
+                            const imageScale = mobile && index === 2 ? 0.05 : 0.2;
+                            const imageY = mobile 
+                                ? (index === 2 ? 80 : (35 + (index - 1) * 5))
+                                : 60;
+                            const imageRotation = mobile && index === 2 
+                                ? (slideFromLeft ? -35 : 35)
+                                : (slideFromLeft ? -12 : 12);
+                            const imageX = mobile && index === 2 
+                                ? fromX * 0.9
+                                : fromX * 0.4;
+                            gsap.set(image, {
+                                opacity: 0, 
+                                scale: imageScale,
+                                y: imageY,
+                                rotation: imageRotation,
+                                x: imageX
+                            });
+                        }
+                        if (textFrame) {
+                            const textScale = mobile && index === 2 ? 0.3 : 0.8;
+                            const textY = mobile 
+                                ? (index === 2 ? 70 : (30 + (index - 1) * 5))
+                                : 50;
+                            const textX = mobile && index === 2 
+                                ? (slideFromLeft ? -80 : 80)
+                                : (slideFromLeft ? -30 : 30);
+                            gsap.set(textFrame, {
+                                opacity: 0, 
+                                scale: textScale,
+                                y: textY,
+                                x: textX
+                            });
+                        }
+                        if (dialogue) {
+                            const dialogueY = mobile 
+                                ? (index === 2 ? 35 : (20 + (index - 1) * 6))
+                                : 30;
+                            gsap.set(dialogue, {
+                                opacity: 0,
+                                y: dialogueY
+                            });
+                        }
+                    }
             }
         });
         
-            // Painel - SLIDE 3 COM EFEITO LEQUE MUITO EVIDENTE NO MOBILE
+            // Painel - Ajustado para completar mais cedo (60% do progresso do scroll)
+            // Isso garante que o painel esteja totalmente visível quando o slide centralizar
             const panelDuration = mobile 
-                ? (index === 2 ? 2.5 : (1.5 + (index - 1) * 0.15)) // Slide 3: 2.5s (mais lento para efeito leque)
-                : 1.2;
+                ? (index === 2 ? 1.5 : (0.9 + (index - 1) * 0.1)) // Reduzido: completa mais rápido
+                : 0.8; // Reduzido de 1.2 para 0.8
             const panelEase = mobile && index === 2 
                 ? 'elastic.out(1, 0.4)' // Slide 3: easing MUITO mais dramático (efeito leque)
                 : (mobile ? 'power2.out' : 'expo.out');
@@ -548,9 +628,10 @@
         
             // Imagem - SLIDE 3 MAIS EVIDENTE NO MOBILE
         if (image) {
+                // Sincronizar início: todos começam juntos ou muito próximos
                 const imageStartTime = mobile 
-                    ? (index === 2 ? 0.5 : (0.4 + (index - 1) * 0.1)) // Slide 3: começa mais tarde
-                    : 0.35;
+                    ? (index === 2 ? 0.3 : 0.25) // Sincronizado: slide 3 em 0.3, outros em 0.25
+                    : 0.25; // Desktop também sincronizado
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
                 const imageFromScale = mobile && index === 2 ? 0.05 : 0.2; // Slide 3: 0.05 (muito menor)
@@ -564,10 +645,10 @@
                     ? fromX * 0.9 // Slide 3: MUITO mais distante lateralmente
                     : fromX * 0.4;
                     
-                // Slide 3: animação MUITO mais dramática (efeito leque)
+                // Slide 3: animação MUITO mais dramática (efeito leque) - Ajustado para completar mais cedo
                 const imageDuration = mobile 
-                    ? (index === 2 ? 2.2 : (1.4 + (index - 1) * 0.12)) // Slide 3: 2.2s (mais lento)
-                    : 1.3;
+                    ? (index === 2 ? 1.3 : (0.85 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
+                    : 0.9; // Reduzido de 1.3 para 0.9
                 const imageEase = mobile && index === 2 
                     ? 'elastic.out(1, 0.3)' // Slide 3: bounce MUITO mais forte
                     : 'elastic.out(1, 0.6)';
@@ -600,9 +681,10 @@
             
             // Texto - SLIDE 3 MAIS EVIDENTE NO MOBILE
         if (textFrame) {
+                // Sincronizar início: começa junto com a imagem
                 const textStartTime = mobile 
-                    ? (index === 2 ? 0.6 : (0.45 + (index - 1) * 0.1)) // Slide 3: mais tarde
-                    : 0.4;
+                    ? (index === 2 ? 0.3 : 0.25) // Sincronizado: mesmo tempo da imagem
+                    : 0.25; // Desktop também sincronizado
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
                 const textFromScale = mobile && index === 2 ? 0.3 : 0.8; // Slide 3: 0.3 (muito menor)
@@ -613,11 +695,11 @@
                     ? (slideFromLeft ? -80 : 80) // Slide 3: MUITO mais distante lateralmente
                     : (slideFromLeft ? -30 : 30);
                     
-                // Slide 3: animação MUITO mais dramática (efeito leque)
+                // Slide 3: animação MUITO mais dramática (efeito leque) - Ajustado para completar mais cedo
                 const textBounce = mobile && index === 2 ? 0.4 : 0.7; // Slide 3: bounce MUITO mais forte
                 const textDuration = mobile 
-                    ? (index === 2 ? 1.8 : (1.2 + (index - 1) * 0.1)) // Slide 3: 1.8s (mais lento)
-                    : 1.1;
+                    ? (index === 2 ? 1.1 : (0.75 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
+                    : 0.8; // Reduzido de 1.1 para 0.8
                 const textScale = mobile && index === 2 ? 1.2 : 1.05; // Slide 3: cresce MUITO mais (1.2)
                     
             tl.fromTo(textFrame,
@@ -646,12 +728,14 @@
             // Diálogo
             // Diálogo - SLIDE 3 MAIS EVIDENTE NO MOBILE
             if (dialogue) {
+                // Sincronizar início: começa um pouco depois da imagem e texto para efeito cascata
                 const dialogueStartTime = mobile 
-                    ? (index === 2 ? 0.5 : (0.3 + (index - 1) * 0.08)) // Slide 3: mais tarde
-                    : 0.25;
+                    ? (index === 2 ? 0.4 : 0.35) // Sincronizado: começa um pouco depois (efeito cascata)
+                    : 0.35; // Desktop também sincronizado
+                // Ajustado para completar mais cedo - garante que diálogo apareça antes do slide centralizar
                 const dialogueDuration = mobile 
-                    ? (index === 2 ? 1.4 : (1.1 + (index - 1) * 0.1)) // Slide 3: 1.4s
-                    : 0.95;
+                    ? (index === 2 ? 0.9 : (0.7 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
+                    : 0.7; // Reduzido de 0.95 para 0.7
                 const dialogueEase = mobile && index === 2 
                     ? 'elastic.out(1, 0.6)' // Slide 3: bounce mais forte
                     : (mobile ? 'power1.out' : 'power3.out');
@@ -815,11 +899,11 @@
         }, '>-0.1');
         
         // Configurar ScrollTrigger DEPOIS de criar toda a timeline
-        // Isso garante que o estado inicial está correto antes do scroll
+        // Ajustado para centralizar slide com elementos carregados
         ScrollTrigger.create({
             trigger: section8,
-            start: mobile ? 'top 95%' : 'top 90%',
-            end: () => `top+=${headerHeight}px center`,
+            start: 'top bottom', // Começa quando entra na tela
+            end: 'top center', // Termina quando está centralizado
             scrub: mobile ? 1.5 : 1.2,
             animation: tl8, // Usar timeline criada
             invalidateOnRefresh: true, // Garantir recálculo suave
@@ -1010,16 +1094,34 @@
                     // IMPORTANTE: Tornar seção visível ANTES de executar animação
                     const section = slide1Data.section;
                     
+                    // Centralizar o slide 1 melhor na tela
+                    const mobile = isMobile();
+                    const headerHeight = mobile 
+                        ? (document.querySelector('.header-wrapper-mobile .hq-header')?.offsetHeight || 100)
+                        : (document.querySelector('.hq-header-desktop')?.offsetHeight || 100);
+                    
+                    // Calcular posição para centralizar melhor (considerando header)
+                    const viewportHeight = window.innerHeight;
+                    const sectionHeight = section.offsetHeight || viewportHeight;
+                    // Centralizar verticalmente considerando o header
+                    const centerOffset = (viewportHeight - sectionHeight) / 2;
+                    
                     // Forçar visibilidade via style inline (sobrescreve CSS)
                     section.style.setProperty('opacity', '1', 'important');
                     section.style.setProperty('visibility', 'visible', 'important');
-                    section.style.setProperty('display', 'block', 'important');
+                    section.style.setProperty('display', 'flex', 'important');
+                    // REMOVIDO: padding-top e padding-bottom - usar CSS padrão para manter espaçamento uniforme
+                    section.style.setProperty('justify-content', 'center', 'important');
+                    section.style.setProperty('align-items', 'center', 'important');
                     
                     // Também usar GSAP para garantir
                     gsap.set(section, { 
                         opacity: 1, 
                         visibility: 'visible',
-                        display: 'block',
+                        display: 'flex',
+                        // REMOVIDO: paddingTop e paddingBottom - usar CSS padrão para manter espaçamento uniforme
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         immediateRender: true // Renderizar imediatamente
                     });
                     
@@ -1055,9 +1157,13 @@
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
+            // Atualizar altura do viewport e refresh ScrollTrigger (sugestão do Gemini)
+            setTrueVHeight();
             scrollToTop();
             setupHeader();
-            ScrollTrigger.refresh();
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.refresh(true); // Forçar recálculo
+            }
         }, 250);
     });
     
