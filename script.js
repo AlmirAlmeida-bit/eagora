@@ -199,7 +199,7 @@
             initialTL.to(firstPanel, {
                 opacity: 1,
             duration: mobile ? 0.8 : 1.0,
-            ease: 'power2.out'
+            ease: 'power3.out' // Melhorado: mais suave
         }, 0);
         
         // PASSO 2: Elementos internos com efeito pipoca crescente (após fade in do painel)
@@ -213,11 +213,11 @@
                     rotation: 0,
                     y: 0,
                 duration: mobile ? 1.1 : 1.0,
-                ease: 'elastic.out(1, 0.6)'
+                ease: 'elastic.out(1, 0.5)' // Melhorado: bounce mais suave
             }, pipocaStart).to(firstImage, {
                     scale: 1,
                 duration: mobile ? 0.45 : 0.35,
-                ease: 'power1.out'
+                ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.15');
         }
         
@@ -229,11 +229,11 @@
                     y: 0,
                     x: 0,
                 duration: mobile ? 1.0 : 0.9,
-                ease: 'elastic.out(1, 0.7)'
+                ease: 'elastic.out(1, 0.6)' // Melhorado: bounce mais suave
             }, pipocaStart + (mobile ? 0.1 : 0.15)).to(firstTextFrame, {
                     scale: 1,
                 duration: mobile ? 0.35 : 0.3,
-                ease: 'power1.out'
+                ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.12');
         }
         
@@ -244,11 +244,11 @@
                 scale: 1.05,
                 y: 0,
                 duration: mobile ? 0.9 : 0.8,
-                ease: 'elastic.out(1, 0.75)'
+                ease: 'elastic.out(1, 0.65)' // Melhorado: bounce mais suave
             }, pipocaStart + (mobile ? 0.2 : 0.25)).to(firstDialogue, {
                 scale: 1,
                 duration: mobile ? 0.25 : 0.2,
-                ease: 'power1.out'
+                ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.1');
         }
         
@@ -452,8 +452,8 @@
                 ? (index === 2 ? 2.5 : 1.0) // Slide 3: 2.5s (EXTREMAMENTE mais lento e suave - era 1.8s)
                 : 0.8;
             const panelEase = mobile && index === 2 
-                ? 'power2.out' // Slide 3: easing EXTREMAMENTE mais suave (power2.out ao invés de elastic)
-                : (mobile ? 'power2.out' : 'expo.out');
+                ? 'power3.out' // Slide 3: easing melhorado (power3.out - mais suave)
+                : (mobile ? 'power3.out' : 'expo.out'); // Melhorado: power3.out para mobile, expo.out para desktop
                 
         tl.to(panel, {
             x: 0,
@@ -489,8 +489,8 @@
                     ? (index === 2 ? 2.8 : 1.1) // Slide 3: 2.8s (EXTREMAMENTE mais lento e suave - era 2.0s)
                     : 0.9;
                 const imageEase = mobile && index === 2 
-                    ? 'elastic.out(1, 0.5)' // Slide 3: efeito de pipoca mantido mas mais suave (0.5 para bounce suave)
-                    : 'elastic.out(1, 0.6)';
+                    ? 'elastic.out(1, 0.4)' // Slide 3: efeito de pipoca melhorado (0.4 para bounce mais refinado)
+                    : 'elastic.out(1, 0.5)'; // Melhorado: bounce mais refinado
                 const imageScale = mobile && index === 2 ? 1.4 : 1.2; // Slide 3: cresce MUITO mais (1.4)
                     
             tl.fromTo(image,
@@ -514,7 +514,7 @@
             ).to(image, {
                 scale: mobile && index === 2 ? 1.15 : 1, // Slide 3: não diminui tanto (1.15 ao invés de 1)
                 duration: mobile && index === 2 ? 1.8 : (mobile ? 0.5 : 0.35), // Slide 3: EXTREMAMENTE mais lento e suave (1.8s - era 1.2s)
-                ease: 'power1.out'
+                ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.15');
         }
             
@@ -535,8 +535,8 @@
                     : (slideFromLeft ? -30 : 30);
                     
                 // Texto - Duração simplificada
-                // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
-                const textBounce = mobile && index === 2 ? 1.0 : 0.7; // Slide 3: bounce EXTREMAMENTE mais suave (1.0 ao invés de 0.8)
+                // Slide 3 com duração EXTREMAMENTE maior e easing melhorado
+                const textBounce = mobile && index === 2 ? 0.8 : 0.6; // Slide 3: bounce melhorado (0.8 - mais refinado)
                 const textDuration = mobile 
                     ? (index === 2 ? 2.2 : 1.0) // Slide 3: 2.2s (EXTREMAMENTE mais lento e suave - era 1.6s)
                     : 0.8;
@@ -561,7 +561,7 @@
             ).to(textFrame, {
                 scale: 1,
                 duration: mobile && index === 2 ? 1.5 : (mobile ? 0.3 : 0.2), // Slide 3: EXTREMAMENTE mais lento e suave (1.5s - era 1.0s)
-                ease: 'power1.out'
+                ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.12');
         }
             
@@ -578,8 +578,8 @@
                     ? (index === 2 ? 2.0 : 0.8) // Slide 3: 2.0s (EXTREMAMENTE mais lento e suave - era 1.4s)
                     : 0.7;
                 const dialogueEase = mobile && index === 2 
-                    ? 'power2.out' // Slide 3: easing EXTREMAMENTE mais suave (power2.out ao invés de elastic)
-                    : (mobile ? 'power1.out' : 'power3.out');
+                    ? 'power3.out' // Slide 3: easing melhorado (power3.out - mais suave)
+                    : (mobile ? 'power2.out' : 'expo.out'); // Melhorado: power2.out para mobile, expo.out para desktop
                 const dialogueFromY = mobile && index === 2 ? 35 : (mobile ? (20 + (index - 1) * 6) : 30);
                 
                 tl.fromTo(dialogue,
@@ -677,7 +677,7 @@
                 rotation: mobile ? 15 : 12, // Rotação dramática
                 x: mobile ? 8 : 10, // Movimento lateral
                 duration: mobile ? 0.4 : 0.5,
-                ease: 'power4.out' // Easing muito dramático
+                ease: 'expo.out' // Melhorado: easing muito suave e dramático
             },
             0
         )
@@ -687,7 +687,7 @@
             rotation: mobile ? -8 : -6,
             x: mobile ? -4 : -5,
             duration: mobile ? 0.3 : 0.35,
-            ease: 'power2.out'
+            ease: 'power3.out' // Melhorado: mais suave
         }, '>-0.1')
         // Terceiro: oscilação final (efeito de estabilização)
             .to(logoFinal, {
@@ -695,7 +695,7 @@
             rotation: mobile ? 3 : 2,
             x: mobile ? 2 : 2.5,
             duration: mobile ? 0.25 : 0.3,
-            ease: 'power1.out'
+            ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.08')
         // Quarto: normalização final
             .to(logoFinal, {
@@ -703,7 +703,7 @@
                 rotation: 0,
             x: 0,
             duration: mobile ? 0.3 : 0.35,
-            ease: 'power1.out'
+            ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.06');
         
         // Frase aparece com efeito de BALÃO DE FALA DE HQ
@@ -725,7 +725,7 @@
                 rotation: mobile ? 2 : 1.5,
                 filter: 'blur(0px)',
                 duration: mobile ? 0.5 : 0.6,
-                ease: 'back.out(1.7)' // Easing com bounce (efeito de balão)
+                ease: 'back.out(1.5)' // Melhorado: easing com bounce mais refinado
             },
             mobile ? 0.6 : 0.7 // Começa durante a oscilação do logo
         )
@@ -735,7 +735,7 @@
             scaleY: 1,
             rotation: 0,
             duration: mobile ? 0.3 : 0.35,
-            ease: 'power1.out'
+            ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.1');
         
         // Configurar ScrollTrigger DEPOIS de criar toda a timeline
