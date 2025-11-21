@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script>
-        // GARANTIR QUE HEADER APARECE E SLIDES FICAM OCULTOS IMEDIATAMENTE
+        // GARANTIR QUE SLIDES FICAM OCULTOS IMEDIATAMENTE (HEADER REMOVIDO)
         (function() {
             // Ocultar primeiro slide
             const firstSection = document.querySelector('#section-1');
@@ -49,15 +49,6 @@
                     section.style.pointerEvents = 'none';
                 }
             });
-            
-            // Garantir que header está visível
-            const headerMobile = document.querySelector('.header-wrapper-mobile .hq-header');
-            const headerDesktop = document.querySelector('.hq-header-desktop');
-            const header = headerMobile || headerDesktop;
-            if (header) {
-                header.style.opacity = '1';
-                header.style.visibility = 'visible';
-            }
             
             // GARANTIR QUE FOOTER ESTÁ COMPLETAMENTE OCULTO
             const footer = document.querySelector('.hq-footer');
@@ -111,25 +102,7 @@
 </div>
 -->
 
-<!-- Container isolado para header no mobile -->
-<div class="header-wrapper-mobile">
-    <header class="hq-header">
-        <div class="header-content">
-            <img src="img/logo.png" alt="Logo" class="header-logo">
-        <h1>DREAMERS CONTRA O SOMBRA!</h1>
-        </div>
-    </header>
-</div>
-
 <div class="hq-container">
-    <!-- Header para desktop -->
-    <header class="hq-header hq-header-desktop">
-        <div class="header-content">
-            <img src="img/logo.png" alt="Logo" class="header-logo">
-        <h1>DREAMERS CONTRA O SOMBRA!</h1>
-        </div>
-    </header>
-
     <!-- SECTION 1: O ASSALTO (A Ameaça) -->
     <section class="story-section" id="section-1">
         <div class="panel panel-bg-red">
