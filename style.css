@@ -359,13 +359,13 @@ body[style] {
 .text-action { color: var(--color-action); }
 .text-highlight { color: var(--color-highlight); }
 
-/* HEADER */
+/* HEADER - OCULTO */
 .header-wrapper-mobile {
-    display: none;
+    display: none !important; /* Ocultar header mobile */
 }
 
 .hq-header-desktop {
-    display: block;
+    display: none !important; /* Ocultar header desktop */
 }
 
 .hq-header {
@@ -401,7 +401,7 @@ body[style] {
     width: 100%;
     margin: 0 auto;
     padding: 20px 20px;
-    padding-top: 100px;
+    padding-top: 0; /* Removido padding-top - header foi ocultado */
     overflow: hidden !important;
     overflow-x: hidden !important;
     overflow-y: hidden !important;
@@ -544,7 +544,7 @@ body[style] {
 @media (max-width: 768px) {
     .hq-container {
         padding: 15px 10px;
-        padding-top: 70px !important;
+        padding-top: 0 !important; /* Removido - header foi ocultado */
         overflow-x: hidden !important;
         overflow-y: hidden !important;
         overflow: hidden !important;
@@ -653,6 +653,27 @@ body[style] {
         max-height: none;
         overflow-y: auto;
         overflow-x: hidden;
+    }
+    
+    /* Corrigir caixas de texto cortadas nos slides 2, 3 e 5 no mobile */
+    #section-2 .panel-content,
+    #section-3 .panel-content,
+    #section-5 .panel-content {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
+    }
+    
+    #section-2 .panel-copy,
+    #section-3 .panel-copy,
+    #section-5 .panel-copy {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
+    }
+    
+    #section-2 .panel-text-frame,
+    #section-3 .panel-text-frame,
+    #section-5 .panel-text-frame {
+        max-height: none !important; /* Remover limitação de altura */
+        overflow-y: auto !important; /* Permitir scroll se necessário */
+        overflow-x: hidden !important;
     }
 
     .panel-text-item {
@@ -884,7 +905,7 @@ body[style] {
 @media (max-width: 480px) {
     .hq-container {
         padding: 10px 8px;
-        padding-top: 65px !important;
+        padding-top: 0 !important; /* Removido - header foi ocultado */
         overflow-x: hidden !important;
         overflow-y: hidden !important;
         overflow: hidden !important;
@@ -978,6 +999,27 @@ body[style] {
         max-height: none;
         overflow-y: auto;
         overflow-x: hidden;
+    }
+    
+    /* Corrigir caixas de texto cortadas nos slides 2, 3 e 5 no mobile pequeno */
+    #section-2 .panel-content,
+    #section-3 .panel-content,
+    #section-5 .panel-content {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
+    }
+    
+    #section-2 .panel-copy,
+    #section-3 .panel-copy,
+    #section-5 .panel-copy {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
+    }
+    
+    #section-2 .panel-text-frame,
+    #section-3 .panel-text-frame,
+    #section-5 .panel-text-frame {
+        max-height: none !important; /* Remover limitação de altura */
+        overflow-y: auto !important; /* Permitir scroll se necessário */
+        overflow-x: hidden !important;
     }
 
     .panel-text-item {
