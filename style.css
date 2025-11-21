@@ -248,6 +248,9 @@ body[style] {
     line-height: 1.4;
     color: var(--color-text-light);
     margin: 0 0 10px 0;
+    word-wrap: break-word; /* Quebrar palavras longas */
+    overflow-wrap: break-word; /* Quebrar palavras longas */
+    max-width: 100%; /* Garantir que não ultrapasse o container */
 }
 
 .panel-text-item:last-child {
@@ -269,6 +272,11 @@ body[style] {
     color: var(--color-highlight);
     text-decoration: underline;
     transition: color 0.3s ease;
+    word-break: break-all; /* Quebrar URLs longas */
+    word-wrap: break-word; /* Quebrar palavras longas */
+    overflow-wrap: break-word; /* Quebrar palavras longas */
+    max-width: 100%; /* Garantir que não ultrapasse o container */
+    display: inline-block; /* Permitir quebra */
 }
 
 .panel-text-item .text-link:hover {
@@ -675,28 +683,48 @@ body[style] {
     /* Corrigir caixas de texto cortadas nos slides 2, 3 e 5 no mobile */
     #section-2 .panel-content,
     #section-3 .panel-content,
-    #section-5 .panel-content {
+    #section-5 .panel-content,
+    #section-7 .panel-content {
         overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
     
     #section-2 .panel-copy,
     #section-3 .panel-copy,
-    #section-5 .panel-copy {
+    #section-5 .panel-copy,
+    #section-7 .panel-copy {
         overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
     
     #section-2 .panel-text-frame,
     #section-3 .panel-text-frame,
-    #section-5 .panel-text-frame {
+    #section-5 .panel-text-frame,
+    #section-7 .panel-text-frame {
         max-height: none !important; /* Remover limitação de altura */
         overflow-y: auto !important; /* Permitir scroll se necessário */
         overflow-x: hidden !important;
+    }
+    
+    /* Garantir que slide 7 não seja cortado no mobile */
+    #section-7 .panel-content,
+    #section-7 .panel-copy {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
 
     .panel-text-item {
         font-size: 13px;
         margin-bottom: 10px;
         line-height: 1.3;
+        word-wrap: break-word !important; /* Quebrar palavras longas no mobile */
+        overflow-wrap: break-word !important; /* Quebrar palavras longas no mobile */
+        max-width: 100% !important; /* Garantir que não ultrapasse o container */
+    }
+    
+    .panel-text-item .text-link {
+        word-break: break-all !important; /* Quebrar URLs longas no mobile */
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
+        display: inline-block !important;
     }
 
     .panel h2 {
@@ -1038,28 +1066,48 @@ body[style] {
     /* Corrigir caixas de texto cortadas nos slides 2, 3 e 5 no mobile pequeno */
     #section-2 .panel-content,
     #section-3 .panel-content,
-    #section-5 .panel-content {
+    #section-5 .panel-content,
+    #section-7 .panel-content {
         overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
     
     #section-2 .panel-copy,
     #section-3 .panel-copy,
-    #section-5 .panel-copy {
+    #section-5 .panel-copy,
+    #section-7 .panel-copy {
         overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
     
     #section-2 .panel-text-frame,
     #section-3 .panel-text-frame,
-    #section-5 .panel-text-frame {
+    #section-5 .panel-text-frame,
+    #section-7 .panel-text-frame {
         max-height: none !important; /* Remover limitação de altura */
         overflow-y: auto !important; /* Permitir scroll se necessário */
         overflow-x: hidden !important;
+    }
+    
+    /* Garantir que slide 7 não seja cortado no mobile pequeno */
+    #section-7 .panel-content,
+    #section-7 .panel-copy {
+        overflow: visible !important; /* Permitir que conteúdo não seja cortado */
     }
 
     .panel-text-item {
         font-size: 12px;
         margin-bottom: 10px;
         line-height: 1.25;
+        word-wrap: break-word !important; /* Quebrar palavras longas no mobile pequeno */
+        overflow-wrap: break-word !important; /* Quebrar palavras longas no mobile pequeno */
+        max-width: 100% !important; /* Garantir que não ultrapasse o container */
+    }
+    
+    .panel-text-item .text-link {
+        word-break: break-all !important; /* Quebrar URLs longas no mobile pequeno */
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
+        display: inline-block !important;
     }
 
     .panel h2 {
