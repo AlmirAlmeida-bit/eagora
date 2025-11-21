@@ -104,135 +104,9 @@
     }
     
     // ============================================
-    // HEADER - CONFIGURAÇÃO SIMPLIFICADA
+    // HEADER - REMOVIDO
     // ============================================
-    function setupHeader() {
-        const mobile = isMobile();
-        const headerWrapper = document.querySelector('.header-wrapper-mobile');
-        const desktopHeader = document.querySelector('.hq-header-desktop');
-        const mobileHeader = headerWrapper ? headerWrapper.querySelector('.hq-header') : null;
-        
-        if (mobile && headerWrapper && mobileHeader) {
-            // Mobile: container isolado fixo
-            gsap.set(headerWrapper, {
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                width: '100%',
-                zIndex: 1000,
-                pointerEvents: 'none',
-                opacity: 1,
-                visibility: 'visible'
-            });
-            
-            gsap.set(mobileHeader, {
-                position: 'relative',
-                width: '100%',
-                pointerEvents: 'auto',
-                opacity: 1,
-                visibility: 'visible'
-            });
-        } else if (!mobile && desktopHeader) {
-            // Desktop: header fixo
-            gsap.set(desktopHeader, {
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                width: '100%',
-                zIndex: 100,
-                opacity: 1,
-                visibility: 'visible'
-            });
-        }
-    }
-    
-    // ============================================
-    // ANIMAÇÃO DO HEADER (EFEITO PIPOCA CRESCENTE)
-    // ============================================
-    function animateHeader(onComplete) {
-        const mobile = isMobile();
-        const header = mobile 
-        ? document.querySelector('.header-wrapper-mobile .hq-header')
-        : document.querySelector('.hq-header-desktop');
-    
-        if (!header) {
-            if (onComplete) onComplete();
-            return null;
-        }
-        
-        const logo = header.querySelector('.header-logo');
-        const h1 = header.querySelector('h1');
-        
-        // Garantir que header está visível
-        gsap.set(header, { opacity: 1, visibility: 'visible' });
-        
-        // Estado inicial - elementos pequenos e invisíveis
-        if (logo) {
-            gsap.set(logo, { 
-                opacity: 0,
-                scale: 0.1,
-                rotation: -15
-            });
-        }
-        
-        if (h1) {
-            gsap.set(h1, { 
-                opacity: 0, 
-                scale: 0.3,
-                y: 20
-            });
-        }
-        
-        const tl = gsap.timeline({ 
-            delay: 0.3,
-            onComplete: () => {
-                // Chamar callback imediatamente quando header terminar
-                if (onComplete) {
-                    onComplete();
-                }
-            }
-        });
-        
-        // Logo aparece com efeito pipoca crescente
-        if (logo) {
-            tl.to(logo, {
-                opacity: 1, 
-                scale: 1.15,
-                rotation: 5,
-                duration: mobile ? 0.9 : 1.1,
-                ease: 'elastic.out(1, 0.6)'
-            }, 0).to(logo, {
-                scale: 1,
-                rotation: 0,
-                duration: mobile ? 0.3 : 0.35,
-                ease: 'power1.out'
-            }, '>-0.1');
-        }
-        
-        // H1 aparece com efeito pipoca crescente (junto com logo)
-        if (h1) {
-            tl.to(h1, {
-                opacity: 1,
-                scale: 1.1,
-                y: 0,
-                duration: mobile ? 1.0 : 1.2,
-                ease: 'elastic.out(1, 0.7)'
-            }, mobile ? 0.1 : 0.15).to(h1, {
-                scale: 1,
-                duration: mobile ? 0.25 : 0.3,
-                ease: 'power1.out'
-            }, '>-0.1');
-        }
-        
-        // Calcular duração total do header para garantir que termine
-        // Logo: 0.9/1.1 + 0.3/0.35 = ~1.2/1.45s
-        // H1: 0.1/0.15 + 1.0/1.2 + 0.25/0.3 = ~1.35/1.65s
-        // Total: ~1.65s (mobile) ou ~1.8s (desktop)
-        
-        return tl;
-    }
+    // Funções de header removidas - não são mais necessárias
     
     // ============================================
     // PRIMEIRO SLIDE - ANIMAÇÃO INICIAL
@@ -256,9 +130,8 @@
         }
         
         const mobile = isMobile();
-        const headerHeight = mobile 
-            ? (document.querySelector('.header-wrapper-mobile .hq-header')?.offsetHeight || 100)
-            : (document.querySelector('.hq-header-desktop')?.offsetHeight || 100);
+        // Header removido - não precisa calcular headerHeight
+        const headerHeight = 0;
         
         // Estado inicial - COMPLETAMENTE OCULTO até header terminar
         // Garantir via CSS inline também
@@ -549,8 +422,9 @@
                 end: endValue,
                 // Scrub aumentado para reduzir crashes - mais suave no mobile
                 // Slide 2 (index 1) tem scrub maior para reduzir puxões ao voltar para slide 1
+                // Slide 3 (index 2) tem scrub ainda maior para suavizar mais a animação
                 scrub: mobile 
-                    ? (index === 1 ? 2.0 : 1.5) // Slide 2 mais suave para reduzir puxões
+                    ? (index === 2 ? 2.5 : (index === 1 ? 2.0 : 1.5)) // Slide 3 mais suave (2.5), Slide 2 (2.0), outros (1.5)
                     : 1.2,
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
@@ -573,9 +447,12 @@
         });
         
             // Painel - Duração simplificada para mobile
-            const panelDuration = mobile ? 1.0 : 0.8; // Simplificado
+            // Slide 3 com duração maior e easing mais suave
+            const panelDuration = mobile 
+                ? (index === 2 ? 1.3 : 1.0) // Slide 3: 1.3s (mais lento e suave)
+                : 0.8;
             const panelEase = mobile && index === 2 
-                ? 'elastic.out(1, 0.4)' // Slide 3: easing MUITO mais dramático (efeito leque)
+                ? 'elastic.out(1, 0.6)' // Slide 3: easing mais suave (0.6 ao invés de 0.4)
                 : (mobile ? 'power2.out' : 'expo.out');
                 
         tl.to(panel, {
@@ -607,9 +484,12 @@
                     : fromX * 0.4;
                     
                 // Imagem - Duração simplificada
-                const imageDuration = mobile ? 1.1 : 0.9; // Simplificado
+                // Slide 3 com duração maior e easing mais suave
+                const imageDuration = mobile 
+                    ? (index === 2 ? 1.4 : 1.1) // Slide 3: 1.4s (mais lento e suave)
+                    : 0.9;
                 const imageEase = mobile && index === 2 
-                    ? 'elastic.out(1, 0.3)' // Slide 3: bounce MUITO mais forte
+                    ? 'elastic.out(1, 0.5)' // Slide 3: bounce mais suave (0.5 ao invés de 0.3)
                     : 'elastic.out(1, 0.6)';
                 const imageScale = mobile && index === 2 ? 1.4 : 1.2; // Slide 3: cresce MUITO mais (1.4)
                     
@@ -633,7 +513,7 @@
                 imageStartTime
             ).to(image, {
                 scale: 1,
-                duration: mobile && index === 2 ? 0.6 : (mobile ? 0.5 : 0.35), // Slide 3: mais lento
+                duration: mobile && index === 2 ? 0.8 : (mobile ? 0.5 : 0.35), // Slide 3: mais lento e suave (0.8s)
                 ease: 'power1.out'
             }, '>-0.15');
         }
@@ -655,8 +535,11 @@
                     : (slideFromLeft ? -30 : 30);
                     
                 // Texto - Duração simplificada
-                const textBounce = mobile && index === 2 ? 0.4 : 0.7;
-                const textDuration = mobile ? 1.0 : 0.8; // Simplificado
+                // Slide 3 com duração maior e bounce mais suave
+                const textBounce = mobile && index === 2 ? 0.6 : 0.7; // Slide 3: bounce mais suave (0.6 ao invés de 0.4)
+                const textDuration = mobile 
+                    ? (index === 2 ? 1.2 : 1.0) // Slide 3: 1.2s (mais lento e suave)
+                    : 0.8;
                 const textScale = mobile && index === 2 ? 1.2 : 1.05; // Slide 3: cresce MUITO mais (1.2)
                     
             tl.fromTo(textFrame,
@@ -677,7 +560,7 @@
                 textStartTime
             ).to(textFrame, {
                 scale: 1,
-                duration: mobile && index === 2 ? 0.4 : (mobile ? 0.3 : 0.2), // Slide 3: mais lento
+                duration: mobile && index === 2 ? 0.6 : (mobile ? 0.3 : 0.2), // Slide 3: mais lento e suave (0.6s)
                 ease: 'power1.out'
             }, '>-0.12');
         }
@@ -690,9 +573,12 @@
                     ? (index === 2 ? 0.4 : 0.35) // Sincronizado: começa um pouco depois (efeito cascata)
                     : 0.35; // Desktop também sincronizado
                 // Diálogo - Duração simplificada
-                const dialogueDuration = mobile ? 0.8 : 0.7; // Simplificado
+                // Slide 3 com duração maior e easing mais suave
+                const dialogueDuration = mobile 
+                    ? (index === 2 ? 1.0 : 0.8) // Slide 3: 1.0s (mais lento e suave)
+                    : 0.7;
                 const dialogueEase = mobile && index === 2 
-                    ? 'elastic.out(1, 0.6)' // Slide 3: bounce mais forte
+                    ? 'elastic.out(1, 0.7)' // Slide 3: bounce mais suave (0.7 ao invés de 0.6)
                     : (mobile ? 'power1.out' : 'power3.out');
                 const dialogueFromY = mobile && index === 2 ? 35 : (mobile ? (20 + (index - 1) * 6) : 30);
                 
@@ -737,9 +623,8 @@
         if (!logoFinal || !fraseFinal) return;
         
         const mobile = isMobile();
-        const headerHeight = mobile 
-            ? (document.querySelector('.header-wrapper-mobile .hq-header')?.offsetHeight || 100)
-            : (document.querySelector('.hq-header-desktop')?.offsetHeight || 100);
+        // Header removido - não precisa calcular headerHeight
+        const headerHeight = 0;
         
         // Estado inicial - logo invisível, 400px mais para baixo
         // Limpar qualquer transform anterior primeiro
@@ -991,108 +876,67 @@
             document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
         };
         
-        // Configurar header PRIMEIRO
-        setupHeader();
-        
-        // GARANTIR QUE HEADER ESTÁ VISÍVEL IMEDIATAMENTE
-        const mobile = isMobile();
-        const header = mobile 
-                ? document.querySelector('.header-wrapper-mobile .hq-header')
-                : document.querySelector('.hq-header-desktop');
-        if (header) {
-            header.style.opacity = '1';
-            header.style.visibility = 'visible';
-            header.style.display = 'block';
-        }
-        
-        // SEQUÊNCIA: Header -> Slide 1 -> Habilitar Scroll -> Outros Slides
+        // HEADER REMOVIDO - Iniciar direto com slide 1
+        // SEQUÊNCIA: Slide 1 -> Habilitar Scroll -> Outros Slides
         // Aguardar um pequeno delay para garantir que tudo está pronto
         setTimeout(() => {
-            animateHeader(() => {
-                // Header terminou completamente, AGORA preparar slide 1
-                const slide1Data = animateFirstSlide(() => {
-                    // Slide 1 terminou, AGORA habilitar scroll
-                    enableScroll();
+            // Pular animação do header - iniciar direto com slide 1
+            const slide1Data = animateFirstSlide(() => {
+                // Slide 1 terminou, AGORA habilitar scroll
+                enableScroll();
+                
+                // CRUCIAL: Habilitar o ScrollTrigger após o scroll ser liberado
+                setTimeout(() => {
+                    // AGORA configurar outros slides (após scroll habilitado)
+                    animateSubsequentSlides();
+                    animateFinalSlide();
+                    animateFooter();
                     
-                    // CRUCIAL: Habilitar o ScrollTrigger após o scroll ser liberado
-                    setTimeout(() => {
-                        // AGORA configurar outros slides (após scroll habilitado)
-                        animateSubsequentSlides();
-                        animateFinalSlide();
-                        animateFooter();
-                        
-                        // Refresh ScrollTrigger com múltiplos requestAnimationFrame para maior estabilidade
-                        // Isso garante que o DOM se estabilize completamente antes do refresh
+                    // Refresh ScrollTrigger com múltiplos requestAnimationFrame para maior estabilidade
+                    // Isso garante que o DOM se estabilize completamente antes do refresh
+                    requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
-                            requestAnimationFrame(() => {
-                                if (typeof ScrollTrigger !== 'undefined') {
-                                    // Atualizar viewport height antes do refresh
-                                    setTrueVHeight();
-                                    ScrollTrigger.refresh(true); // Força recálculo completo
-                                }
-                            });
+                            if (typeof ScrollTrigger !== 'undefined') {
+                                // Atualizar viewport height antes do refresh
+                                setTrueVHeight();
+                                ScrollTrigger.refresh(true); // Força recálculo completo
+                            }
                         });
-                    }, 150); // Aumentado de 100 para 150ms para maior estabilidade
-    });
-    
-                // Tornar seção visível e executar animação APENAS quando header terminar
-                if (slide1Data && slide1Data.timeline && slide1Data.section) {
-                    // IMPORTANTE: Tornar seção visível ANTES de executar animação
-                    const section = slide1Data.section;
-                    
-                    // Centralizar o slide 1 melhor na tela
-                    const mobile = isMobile();
-                    const headerHeight = mobile 
-                        ? (document.querySelector('.header-wrapper-mobile .hq-header')?.offsetHeight || 100)
-                        : (document.querySelector('.hq-header-desktop')?.offsetHeight || 100);
-                    
-                    // Calcular posição para centralizar melhor (considerando header)
-                    const viewportHeight = window.innerHeight;
-                    const sectionHeight = section.offsetHeight || viewportHeight;
-                    // Centralizar verticalmente considerando o header
-                    const centerOffset = (viewportHeight - sectionHeight) / 2;
-                    
-                    // Forçar visibilidade via style inline (sobrescreve CSS)
-                    section.style.setProperty('opacity', '1', 'important');
-                    section.style.setProperty('visibility', 'visible', 'important');
-                    section.style.setProperty('display', 'flex', 'important');
-                    // REMOVIDO: padding-top e padding-bottom - usar CSS padrão para manter espaçamento uniforme
-                    section.style.setProperty('justify-content', 'center', 'important');
-                    section.style.setProperty('align-items', 'center', 'important');
-                    
-                    // Também usar GSAP para garantir
-                    gsap.set(section, { 
-                        opacity: 1, 
-                        visibility: 'visible',
-                        display: 'flex',
-                        // REMOVIDO: paddingTop e paddingBottom - usar CSS padrão para manter espaçamento uniforme
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        immediateRender: true // Renderizar imediatamente
                     });
-                    
-                    // Executar animação após garantir que está visível
-                    if (slide1Data.timeline) {
-                        // Usar requestAnimationFrame para garantir que o DOM atualizou
-                        requestAnimationFrame(() => {
-                            requestAnimationFrame(() => {
-                                // Verificar se a seção está realmente visível
-                                if (section.style.display !== 'none' && section.style.visibility !== 'hidden') {
-                                    slide1Data.timeline.play();
-    } else {
-                                    // Se ainda estiver oculta, forçar novamente
-                                    section.style.setProperty('opacity', '1', 'important');
-                                    section.style.setProperty('visibility', 'visible', 'important');
-                                    section.style.setProperty('display', 'block', 'important');
-                                    slide1Data.timeline.play();
-                                }
-                            });
-                        });
-                    }
-                } else {
-                    console.error('Slide 1 data não encontrado ou incompleto:', slide1Data);
-                }
+                }, 150); // Aumentado de 100 para 150ms para maior estabilidade
             });
+            
+            // Tornar seção visível e executar animação IMEDIATAMENTE
+            if (slide1Data && slide1Data.timeline && slide1Data.section) {
+                const section = slide1Data.section;
+                
+                // PRIMEIRO: Tornar seção visível ANTES de qualquer coisa
+                section.style.setProperty('display', 'flex', 'important');
+                section.style.setProperty('visibility', 'visible', 'important');
+                section.style.setProperty('opacity', '1', 'important');
+                section.style.setProperty('justify-content', 'center', 'important');
+                section.style.setProperty('align-items', 'center', 'important');
+                
+                // Também usar GSAP para garantir
+                gsap.set(section, { 
+                    display: 'flex',
+                    visibility: 'visible',
+                    opacity: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    immediateRender: true
+                });
+                
+                // Executar animação IMEDIATAMENTE após tornar visível
+                // Usar pequeno delay para garantir que o DOM atualizou
+                setTimeout(() => {
+                    if (slide1Data.timeline) {
+                        slide1Data.timeline.play();
+                    }
+                }, 50);
+            } else {
+                console.error('Slide 1 data não encontrado ou incompleto:', slide1Data);
+            }
         }, 100);
     }
     
@@ -1106,7 +950,7 @@
             // Atualizar altura do viewport
             setTrueVHeight();
             scrollToTop();
-            setupHeader();
+            // Header removido - não precisa mais setupHeader()
             if (typeof ScrollTrigger !== 'undefined') {
                 // Usar requestAnimationFrame para maior precisão de renderização
                 requestAnimationFrame(() => {
