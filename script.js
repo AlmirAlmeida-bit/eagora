@@ -198,7 +198,7 @@
         // PASSO 1: Fade in do painel primeiro
             initialTL.to(firstPanel, {
                 opacity: 1,
-            duration: mobile ? 0.8 : 1.0,
+            duration: mobile ? 0.8 : 1.5, // Desktop: aumentado de 1.0 para 1.5s (mais suave)
             ease: 'power3.out' // Melhorado: mais suave
         }, 0);
         
@@ -212,11 +212,11 @@
                     scale: 1.12,
                     rotation: 0,
                     y: 0,
-                duration: mobile ? 1.1 : 1.0,
+                duration: mobile ? 1.1 : 1.4, // Desktop: aumentado de 1.0 para 1.4s (mais suave)
                 ease: 'elastic.out(1, 0.5)' // Melhorado: bounce mais suave
             }, pipocaStart).to(firstImage, {
                     scale: 1,
-                duration: mobile ? 0.45 : 0.35,
+                duration: mobile ? 0.45 : 0.5, // Desktop: aumentado de 0.35 para 0.5s (mais suave)
                 ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.15');
         }
@@ -228,11 +228,11 @@
                     scale: 1.06,
                     y: 0,
                     x: 0,
-                duration: mobile ? 1.0 : 0.9,
+                duration: mobile ? 1.0 : 1.3, // Desktop: aumentado de 0.9 para 1.3s (mais suave)
                 ease: 'elastic.out(1, 0.6)' // Melhorado: bounce mais suave
             }, pipocaStart + (mobile ? 0.1 : 0.15)).to(firstTextFrame, {
                     scale: 1,
-                duration: mobile ? 0.35 : 0.3,
+                duration: mobile ? 0.35 : 0.45, // Desktop: aumentado de 0.3 para 0.45s (mais suave)
                 ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.12');
         }
@@ -243,11 +243,11 @@
                 opacity: 1,
                 scale: 1.05,
                 y: 0,
-                duration: mobile ? 0.9 : 0.8,
+                duration: mobile ? 0.9 : 1.2, // Desktop: aumentado de 0.8 para 1.2s (mais suave)
                 ease: 'elastic.out(1, 0.65)' // Melhorado: bounce mais suave
             }, pipocaStart + (mobile ? 0.2 : 0.25)).to(firstDialogue, {
                 scale: 1,
-                duration: mobile ? 0.25 : 0.2,
+                duration: mobile ? 0.25 : 0.4, // Desktop: aumentado de 0.2 para 0.4s (mais suave)
                 ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.1');
         }
@@ -450,7 +450,7 @@
             // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
             const panelDuration = mobile 
                 ? (index === 2 ? 2.5 : 1.0) // Slide 3: 2.5s (EXTREMAMENTE mais lento e suave - era 1.8s)
-                : 0.8;
+                : 1.4; // Desktop: aumentado de 0.8 para 1.4s (mais suave)
             const panelEase = mobile && index === 2 
                 ? 'power3.out' // Slide 3: easing melhorado (power3.out - mais suave)
                 : (mobile ? 'power3.out' : 'expo.out'); // Melhorado: power3.out para mobile, expo.out para desktop
@@ -469,7 +469,7 @@
                 // Sincronizar início: slide 3 começa bem depois para suavizar EXTREMAMENTE mais
                 const imageStartTime = mobile 
                     ? (index === 2 ? 0.5 : 0.25) // Slide 3: 0.5s (EXTREMAMENTE mais espaçado - era 0.4s), outros em 0.25
-                    : 0.25; // Desktop também sincronizado
+                    : 0.35; // Desktop: aumentado de 0.25 para 0.35s (mais espaçado e suave)
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
                 const imageFromScale = mobile && index === 2 ? 0.05 : 0.2; // Slide 3: 0.05 (muito menor)
@@ -487,7 +487,7 @@
                 // Slide 3 com duração EXTREMAMENTE maior mas mantendo efeito de pipoca (elastic)
                 const imageDuration = mobile 
                     ? (index === 2 ? 2.8 : 1.1) // Slide 3: 2.8s (EXTREMAMENTE mais lento e suave - era 2.0s)
-                    : 0.9;
+                    : 1.5; // Desktop: aumentado de 0.9 para 1.5s (mais suave)
                 const imageEase = mobile && index === 2 
                     ? 'elastic.out(1, 0.4)' // Slide 3: efeito de pipoca melhorado (0.4 para bounce mais refinado)
                     : 'elastic.out(1, 0.5)'; // Melhorado: bounce mais refinado
@@ -513,7 +513,7 @@
                 imageStartTime
             ).to(image, {
                 scale: mobile && index === 2 ? 1.15 : 1, // Slide 3: não diminui tanto (1.15 ao invés de 1)
-                duration: mobile && index === 2 ? 1.8 : (mobile ? 0.5 : 0.35), // Slide 3: EXTREMAMENTE mais lento e suave (1.8s - era 1.2s)
+                duration: mobile && index === 2 ? 1.8 : (mobile ? 0.5 : 0.6), // Desktop: aumentado de 0.35 para 0.6s (mais suave)
                 ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.15');
         }
@@ -523,7 +523,7 @@
                 // Sincronizar início: slide 3 começa bem depois para suavizar EXTREMAMENTE mais
                 const textStartTime = mobile 
                     ? (index === 2 ? 0.5 : 0.25) // Slide 3: 0.5s (EXTREMAMENTE mais espaçado - era 0.4s), outros em 0.25
-                    : 0.25; // Desktop também sincronizado
+                    : 0.35; // Desktop: aumentado de 0.25 para 0.35s (mais espaçado e suave)
                     
                 // Slide 3: valores iniciais MUITO mais extremos (efeito leque)
                 const textFromScale = mobile && index === 2 ? 0.3 : 0.8; // Slide 3: 0.3 (muito menor)
@@ -539,7 +539,7 @@
                 const textBounce = mobile && index === 2 ? 0.8 : 0.6; // Slide 3: bounce melhorado (0.8 - mais refinado)
                 const textDuration = mobile 
                     ? (index === 2 ? 2.2 : 1.0) // Slide 3: 2.2s (EXTREMAMENTE mais lento e suave - era 1.6s)
-                    : 0.8;
+                    : 1.3; // Desktop: aumentado de 0.8 para 1.3s (mais suave)
                 const textScale = mobile && index === 2 ? 1.2 : 1.05; // Slide 3: cresce MUITO mais (1.2)
                     
             tl.fromTo(textFrame,
@@ -560,7 +560,7 @@
                 textStartTime
             ).to(textFrame, {
                 scale: 1,
-                duration: mobile && index === 2 ? 1.5 : (mobile ? 0.3 : 0.2), // Slide 3: EXTREMAMENTE mais lento e suave (1.5s - era 1.0s)
+                duration: mobile && index === 2 ? 1.5 : (mobile ? 0.3 : 0.4), // Desktop: aumentado de 0.2 para 0.4s (mais suave)
                 ease: 'power3.out' // Melhorado: mais suave // Melhorado: mais suave
             }, '>-0.12');
         }
@@ -576,7 +576,7 @@
                 // Slide 3 com duração EXTREMAMENTE maior e easing EXTREMAMENTE mais suave
                 const dialogueDuration = mobile 
                     ? (index === 2 ? 2.0 : 0.8) // Slide 3: 2.0s (EXTREMAMENTE mais lento e suave - era 1.4s)
-                    : 0.7;
+                    : 1.2; // Desktop: aumentado de 0.7 para 1.2s (mais suave)
                 const dialogueEase = mobile && index === 2 
                     ? 'power3.out' // Slide 3: easing melhorado (power3.out - mais suave)
                     : (mobile ? 'power2.out' : 'expo.out'); // Melhorado: power2.out para mobile, expo.out para desktop
@@ -676,7 +676,7 @@
                 scale: 1.4, // Cresce muito (efeito de explosão)
                 rotation: mobile ? 15 : 12, // Rotação dramática
                 x: mobile ? 8 : 10, // Movimento lateral
-                duration: mobile ? 0.4 : 0.5,
+                duration: mobile ? 0.4 : 0.8, // Desktop: aumentado de 0.5 para 0.8s (mais suave)
                 ease: 'expo.out' // Melhorado: easing muito suave e dramático
             },
             0
@@ -686,7 +686,7 @@
             scale: 0.9,
             rotation: mobile ? -8 : -6,
             x: mobile ? -4 : -5,
-            duration: mobile ? 0.3 : 0.35,
+            duration: mobile ? 0.3 : 0.5, // Desktop: aumentado de 0.35 para 0.5s (mais suave)
             ease: 'power3.out' // Melhorado: mais suave
         }, '>-0.1')
         // Terceiro: oscilação final (efeito de estabilização)
@@ -694,7 +694,7 @@
                 scale: 1.05,
             rotation: mobile ? 3 : 2,
             x: mobile ? 2 : 2.5,
-            duration: mobile ? 0.25 : 0.3,
+            duration: mobile ? 0.25 : 0.45, // Desktop: aumentado de 0.3 para 0.45s (mais suave)
             ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.08')
         // Quarto: normalização final
@@ -702,7 +702,7 @@
                 scale: 1,
                 rotation: 0,
             x: 0,
-            duration: mobile ? 0.3 : 0.35,
+            duration: mobile ? 0.3 : 0.5, // Desktop: aumentado de 0.35 para 0.5s (mais suave)
             ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.06');
         
@@ -724,7 +724,7 @@
                 y: 0,
                 rotation: mobile ? 2 : 1.5,
                 filter: 'blur(0px)',
-                duration: mobile ? 0.5 : 0.6,
+                duration: mobile ? 0.5 : 0.9, // Desktop: aumentado de 0.6 para 0.9s (mais suave)
                 ease: 'back.out(1.5)' // Melhorado: easing com bounce mais refinado
             },
             mobile ? 0.6 : 0.7 // Começa durante a oscilação do logo
@@ -734,7 +734,7 @@
             scaleX: 1,
             scaleY: 1,
             rotation: 0,
-            duration: mobile ? 0.3 : 0.35,
+            duration: mobile ? 0.3 : 0.5, // Desktop: aumentado de 0.35 para 0.5s (mais suave)
             ease: 'power2.out' // Melhorado: mais suave
         }, '>-0.1');
         
