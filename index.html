@@ -30,6 +30,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script>
+        // Tratamento de erros globais para evitar erros de extensões do navegador
+        window.addEventListener('error', function(e) {
+            // Suprimir erros relacionados a service workers e extensões
+            if (e.message && (
+                e.message.includes('canal de mensagens') ||
+                e.message.includes('message channel') ||
+                e.message.includes('service worker') ||
+                e.message.includes('chrome.runtime') ||
+                e.message.includes('extension')
+            )) {
+                e.preventDefault();
+                return false;
+            }
+        }, true);
+
+        // Tratamento de promessas rejeitadas não capturadas
+        window.addEventListener('unhandledrejection', function(e) {
+            // Suprimir erros relacionados a service workers e extensões
+            if (e.reason && (
+                (typeof e.reason === 'string' && (
+                    e.reason.includes('canal de mensagens') ||
+                    e.reason.includes('message channel') ||
+                    e.reason.includes('service worker') ||
+                    e.reason.includes('chrome.runtime') ||
+                    e.reason.includes('extension')
+                )) ||
+                (e.reason.message && (
+                    e.reason.message.includes('canal de mensagens') ||
+                    e.reason.message.includes('message channel') ||
+                    e.reason.message.includes('service worker') ||
+                    e.reason.message.includes('chrome.runtime') ||
+                    e.reason.message.includes('extension')
+                ))
+            )) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
         // GARANTIR QUE SLIDES FICAM OCULTOS IMEDIATAMENTE (HEADER REMOVIDO)
         (function() {
             // Ocultar primeiro slide
@@ -307,10 +346,10 @@
 
 </div>
 
-<!-- FOOTER -->
+<!-- FOOTER
 <footer class="hq-footer">
     <p class="footer-text">© 2025 Criado no Laboratório de Tecnologia da Dream Factory - Todos os direitos reservados</p>
-</footer>
+</footer>-->
 
 <script src="script.js"></script>
 
