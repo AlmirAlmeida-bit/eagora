@@ -547,14 +547,28 @@
                 endTrigger: section, // CHAVE: Garante que o fim da animação use a seção correta
                 start: startValue,
                 end: endValue,
-                // Scrub simplificado - mais rápido e responsivo no mobile
-                scrub: mobile ? 1.0 : 0.8,
+                // Scrub aumentado para reduzir crashes - mais suave no mobile
+                // Slide 2 (index 1) tem scrub maior para reduzir puxões ao voltar para slide 1
+                scrub: mobile 
+                    ? (index === 1 ? 2.0 : 1.5) // Slide 2 mais suave para reduzir puxões
+                    : 1.2,
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
+                markers: false, // Desabilitar markers para melhor performance
+                anticipatePin: 1, // Antecipar pin para suavidade
                 // onLeaveBack simplificado - força timeline a voltar ao início
-                onLeaveBack: () => tl.progress(0),
+                onLeaveBack: () => {
+                    // Usar requestAnimationFrame para suavizar a transição
+                    requestAnimationFrame(() => {
+                        tl.progress(0);
+                    });
+                },
                 // onEnterBack - garante estado final correto ao rolar para baixo novamente
-                onEnterBack: () => tl.progress(1)
+                onEnterBack: () => {
+                    requestAnimationFrame(() => {
+                        tl.progress(1);
+                    });
+                }
             }
         });
         
@@ -846,13 +860,22 @@
             endTrigger: section8, // Garante que o fim use a seção correta
             start: 'top bottom', // Começa quando entra na tela
             end: 'center center', // Mais robusto que 'top center' no mobile
-            scrub: mobile ? 1.5 : 1.2,
+            scrub: mobile ? 2.0 : 1.5, // Aumentado para reduzir crashes
             animation: tl8, // Usar timeline criada
             invalidateOnRefresh: true, // Garantir recálculo suave
             anticipatePin: 1, // Antecipar pin para suavidade
-            // Callbacks simplificados - removido onUpdate desnecessário
-            onLeaveBack: () => tl8.progress(0),
-            onEnterBack: () => tl8.progress(1)
+            markers: false, // Desabilitar markers para melhor performance
+            // Callbacks simplificados com requestAnimationFrame
+            onLeaveBack: () => {
+                requestAnimationFrame(() => {
+                    tl8.progress(0);
+                });
+            },
+            onEnterBack: () => {
+                requestAnimationFrame(() => {
+                    tl8.progress(1);
+                });
+            }
         });
     }
     
@@ -998,14 +1021,18 @@
                         animateFinalSlide();
                         animateFooter();
                         
-                        // Refresh ScrollTrigger com requestAnimationFrame para maior robustez
-                        // Isso garante que o DOM se estabilize antes do refresh
+                        // Refresh ScrollTrigger com múltiplos requestAnimationFrame para maior estabilidade
+                        // Isso garante que o DOM se estabilize completamente antes do refresh
                         requestAnimationFrame(() => {
-                            if (typeof ScrollTrigger !== 'undefined') {
-                                ScrollTrigger.refresh(true); // Força recálculo completo
-                            }
+                            requestAnimationFrame(() => {
+                                if (typeof ScrollTrigger !== 'undefined') {
+                                    // Atualizar viewport height antes do refresh
+                                    setTrueVHeight();
+                                    ScrollTrigger.refresh(true); // Força recálculo completo
+                                }
+                            });
                         });
-                    }, 100);
+                    }, 150); // Aumentado de 100 para 150ms para maior estabilidade
     });
     
                 // Tornar seção visível e executar animação APENAS quando header terminar
