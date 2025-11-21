@@ -533,86 +533,33 @@
                 });
             }
             
-            // Timeline com ScrollTrigger - Ajustado para centralizar slide com elementos carregados
+            // Timeline com ScrollTrigger - OTIMIZADO PARA MOBILE
             // Start: quando o topo da seção toca o topo do viewport (começa a entrar)
             const startValue = 'top bottom';
             
-            // End: quando o slide está centralizado (topo da seção no centro do viewport)
-            // Isso garante que a animação termine quando o slide estiver centralizado
-            const endValue = 'top center';
+            // End: 'center center' é mais robusto que 'top center' no mobile
+            // endTrigger garante que o ScrollTrigger use a seção correta para calcular o final
+            const endValue = 'center center';
         
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: section,
+                endTrigger: section, // CHAVE: Garante que o fim da animação use a seção correta
                 start: startValue,
                 end: endValue,
-                    // Scrub ajustado para suavizar e garantir que animação complete quando slide centralizar
-                    scrub: mobile 
-                        ? (index === 2 ? 1.2 : 1.0) // Suave para garantir sincronização
-                        : 1.0, // Desktop também suave
+                // Scrub simplificado - mais rápido e responsivo no mobile
+                scrub: mobile ? 1.0 : 0.8,
                 invalidateOnRefresh: true,
-                    preventOverlaps: true,
-                    // Adicionar onLeaveBack para forçar estado inicial ao rolar para cima (sugestão do Gemini)
-                    onLeaveBack: () => {
-                        // Forçar o estado inicial quando rolar para cima e sair da vista
-                        gsap.set(panel, { 
-                            x: fromX, 
-                            opacity: 0,
-                            rotation: mobile ? (slideFromLeft ? -rotationAmount : rotationAmount) : 0,
-                            scale: mobile ? scaleAmount : 1
-                        });
-                        if (image) {
-                            const imageScale = mobile && index === 2 ? 0.05 : 0.2;
-                            const imageY = mobile 
-                                ? (index === 2 ? 80 : (35 + (index - 1) * 5))
-                                : 60;
-                            const imageRotation = mobile && index === 2 
-                                ? (slideFromLeft ? -35 : 35)
-                                : (slideFromLeft ? -12 : 12);
-                            const imageX = mobile && index === 2 
-                                ? fromX * 0.9
-                                : fromX * 0.4;
-                            gsap.set(image, {
-                                opacity: 0, 
-                                scale: imageScale,
-                                y: imageY,
-                                rotation: imageRotation,
-                                x: imageX
-                            });
-                        }
-                        if (textFrame) {
-                            const textScale = mobile && index === 2 ? 0.3 : 0.8;
-                            const textY = mobile 
-                                ? (index === 2 ? 70 : (30 + (index - 1) * 5))
-                                : 50;
-                            const textX = mobile && index === 2 
-                                ? (slideFromLeft ? -80 : 80)
-                                : (slideFromLeft ? -30 : 30);
-                            gsap.set(textFrame, {
-                                opacity: 0, 
-                                scale: textScale,
-                                y: textY,
-                                x: textX
-                            });
-                        }
-                        if (dialogue) {
-                            const dialogueY = mobile 
-                                ? (index === 2 ? 35 : (20 + (index - 1) * 6))
-                                : 30;
-                            gsap.set(dialogue, {
-                                opacity: 0,
-                                y: dialogueY
-                            });
-                        }
-                    }
+                preventOverlaps: true,
+                // onLeaveBack simplificado - força timeline a voltar ao início
+                onLeaveBack: () => tl.progress(0),
+                // onEnterBack - garante estado final correto ao rolar para baixo novamente
+                onEnterBack: () => tl.progress(1)
             }
         });
         
-            // Painel - Ajustado para completar mais cedo (60% do progresso do scroll)
-            // Isso garante que o painel esteja totalmente visível quando o slide centralizar
-            const panelDuration = mobile 
-                ? (index === 2 ? 1.5 : (0.9 + (index - 1) * 0.1)) // Reduzido: completa mais rápido
-                : 0.8; // Reduzido de 1.2 para 0.8
+            // Painel - Duração simplificada para mobile
+            const panelDuration = mobile ? 1.0 : 0.8; // Simplificado
             const panelEase = mobile && index === 2 
                 ? 'elastic.out(1, 0.4)' // Slide 3: easing MUITO mais dramático (efeito leque)
                 : (mobile ? 'power2.out' : 'expo.out');
@@ -645,10 +592,8 @@
                     ? fromX * 0.9 // Slide 3: MUITO mais distante lateralmente
                     : fromX * 0.4;
                     
-                // Slide 3: animação MUITO mais dramática (efeito leque) - Ajustado para completar mais cedo
-                const imageDuration = mobile 
-                    ? (index === 2 ? 1.3 : (0.85 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
-                    : 0.9; // Reduzido de 1.3 para 0.9
+                // Imagem - Duração simplificada
+                const imageDuration = mobile ? 1.1 : 0.9; // Simplificado
                 const imageEase = mobile && index === 2 
                     ? 'elastic.out(1, 0.3)' // Slide 3: bounce MUITO mais forte
                     : 'elastic.out(1, 0.6)';
@@ -695,11 +640,9 @@
                     ? (slideFromLeft ? -80 : 80) // Slide 3: MUITO mais distante lateralmente
                     : (slideFromLeft ? -30 : 30);
                     
-                // Slide 3: animação MUITO mais dramática (efeito leque) - Ajustado para completar mais cedo
-                const textBounce = mobile && index === 2 ? 0.4 : 0.7; // Slide 3: bounce MUITO mais forte
-                const textDuration = mobile 
-                    ? (index === 2 ? 1.1 : (0.75 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
-                    : 0.8; // Reduzido de 1.1 para 0.8
+                // Texto - Duração simplificada
+                const textBounce = mobile && index === 2 ? 0.4 : 0.7;
+                const textDuration = mobile ? 1.0 : 0.8; // Simplificado
                 const textScale = mobile && index === 2 ? 1.2 : 1.05; // Slide 3: cresce MUITO mais (1.2)
                     
             tl.fromTo(textFrame,
@@ -732,10 +675,8 @@
                 const dialogueStartTime = mobile 
                     ? (index === 2 ? 0.4 : 0.35) // Sincronizado: começa um pouco depois (efeito cascata)
                     : 0.35; // Desktop também sincronizado
-                // Ajustado para completar mais cedo - garante que diálogo apareça antes do slide centralizar
-                const dialogueDuration = mobile 
-                    ? (index === 2 ? 0.9 : (0.7 + (index - 1) * 0.08)) // Reduzido: completa mais rápido
-                    : 0.7; // Reduzido de 0.95 para 0.7
+                // Diálogo - Duração simplificada
+                const dialogueDuration = mobile ? 0.8 : 0.7; // Simplificado
                 const dialogueEase = mobile && index === 2 
                     ? 'elastic.out(1, 0.6)' // Slide 3: bounce mais forte
                     : (mobile ? 'power1.out' : 'power3.out');
@@ -899,28 +840,19 @@
         }, '>-0.1');
         
         // Configurar ScrollTrigger DEPOIS de criar toda a timeline
-        // Ajustado para centralizar slide com elementos carregados
+        // OTIMIZADO PARA MOBILE
         ScrollTrigger.create({
             trigger: section8,
+            endTrigger: section8, // Garante que o fim use a seção correta
             start: 'top bottom', // Começa quando entra na tela
-            end: 'top center', // Termina quando está centralizado
+            end: 'center center', // Mais robusto que 'top center' no mobile
             scrub: mobile ? 1.5 : 1.2,
             animation: tl8, // Usar timeline criada
             invalidateOnRefresh: true, // Garantir recálculo suave
             anticipatePin: 1, // Antecipar pin para suavidade
-            onUpdate: () => {
-                // Garantir que o estado inicial está sempre correto durante o scroll
-                if (tl8.progress() === 0) {
-                    gsap.set(logoFinal, {
-                        opacity: 0,
-                        scale: 0.3,
-                        y: mobile ? 900 : 910,
-                        rotation: mobile ? -20 : -18,
-                        x: mobile ? -15 : -12,
-                        immediateRender: true
-                    });
-                }
-            }
+            // Callbacks simplificados - removido onUpdate desnecessário
+            onLeaveBack: () => tl8.progress(0),
+            onEnterBack: () => tl8.progress(1)
         });
     }
     
@@ -1024,32 +956,16 @@
             }
         });
         
-        // Desabilitar scroll temporariamente - apenas HTML pode ter scroll, mas vamos bloquear
+        // BLOQUEAR SCROLL DE FORMA MENOS AGRESSIVA (apenas CSS)
+        // Removido bloqueio por eventos (wheel, touchmove, scroll) para evitar conflitos no mobile
+        // Mantendo apenas o controle de overflow-y no documentElement, que é mais seguro
         document.documentElement.style.setProperty('overflow-y', 'hidden', 'important');
+        let scrollBlocked = true; // Mantido para consistência
         
-        // Prevenir scroll via eventos
-        let scrollBlocked = true;
-        const preventScroll = (e) => {
-            if (scrollBlocked) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }
-        };
-        
-        // Adicionar listeners para bloquear scroll
-        const options = { passive: false, capture: true };
-        window.addEventListener('wheel', preventScroll, options);
-        window.addEventListener('touchmove', preventScroll, options);
-        window.addEventListener('scroll', preventScroll, options);
-        
-        // Função para habilitar scroll
+        // Função para habilitar scroll (Simplificada - sem remoção de listeners)
         const enableScroll = () => {
             scrollBlocked = false;
             document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
-            window.removeEventListener('wheel', preventScroll, options);
-            window.removeEventListener('touchmove', preventScroll, options);
-            window.removeEventListener('scroll', preventScroll, options);
         };
         
         // Configurar header PRIMEIRO
@@ -1075,18 +991,21 @@
                     // Slide 1 terminou, AGORA habilitar scroll
                     enableScroll();
                     
-                    // Aguardar um pouco para garantir que scroll foi habilitado
+                    // CRUCIAL: Habilitar o ScrollTrigger após o scroll ser liberado
                     setTimeout(() => {
                         // AGORA configurar outros slides (após scroll habilitado)
                         animateSubsequentSlides();
                         animateFinalSlide();
                         animateFooter();
                         
-                        // Refresh ScrollTrigger
-                        setTimeout(() => {
-                            ScrollTrigger.refresh();
-                        }, 200);
-        }, 100);
+                        // Refresh ScrollTrigger com requestAnimationFrame para maior robustez
+                        // Isso garante que o DOM se estabilize antes do refresh
+                        requestAnimationFrame(() => {
+                            if (typeof ScrollTrigger !== 'undefined') {
+                                ScrollTrigger.refresh(true); // Força recálculo completo
+                            }
+                        });
+                    }, 100);
     });
     
                 // Tornar seção visível e executar animação APENAS quando header terminar
@@ -1151,18 +1070,21 @@
     }
     
     // ============================================
-    // RESIZE HANDLER
+    // RESIZE HANDLER (MELHORADO)
     // ============================================
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            // Atualizar altura do viewport e refresh ScrollTrigger (sugestão do Gemini)
+            // Atualizar altura do viewport
             setTrueVHeight();
             scrollToTop();
             setupHeader();
             if (typeof ScrollTrigger !== 'undefined') {
-                ScrollTrigger.refresh(true); // Forçar recálculo
+                // Usar requestAnimationFrame para maior precisão de renderização
+                requestAnimationFrame(() => {
+                    ScrollTrigger.refresh(true); // Forçar recálculo completo
+                });
             }
         }, 250);
     });
