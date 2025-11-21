@@ -72,7 +72,17 @@ body[style] {
 
 /* FORÇAR MESMO ESPAÇAMENTO PARA TODAS AS SEÇÕES - SEM EXCEÇÕES */
 /* Garantir que TODAS as seções tenham EXATAMENTE o mesmo espaçamento */
+/* Regras muito específicas para garantir compatibilidade com todos os navegadores */
 .story-section,
+section.story-section,
+section#section-1,
+section#section-2,
+section#section-3,
+section#section-4,
+section#section-5,
+section#section-6,
+section#section-7,
+section#section-8,
 #section-1,
 #section-2,
 #section-3,
@@ -92,6 +102,8 @@ body[style] {
     margin-left: 0 !important;
     margin-right: 0 !important;
     box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
 }
 
 /* OCULTAR PRIMEIRO SLIDE INICIALMENTE */
@@ -581,14 +593,66 @@ body[style] {
     }
 
     /* FORÇAR MESMO ESPAÇAMENTO PARA TODAS AS SEÇÕES NO MOBILE - ABSOLUTAMENTE UNIFORME */
-    .story-section,
+    .story-section {
+        padding: 20px 15px !important;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-height: 100vh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
+        height: 100vh !important;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        max-height: 100vh !important;
+        max-height: calc(var(--vh, 1vh) * 100) !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* PADDING-TOP ADICIONAL PARA SLIDES 1-7 NO MOBILE - REGRAS MUITO ESPECÍFICAS */
+    section#section-1,
+    section#section-2,
+    section#section-3,
+    section#section-4,
+    section#section-5,
+    section#section-6,
+    section#section-7,
     #section-1,
     #section-2,
     #section-3,
     #section-4,
     #section-5,
     #section-6,
-    #section-7,
+    #section-7 {
+        padding: 50px 15px 20px 15px !important; /* padding: top right bottom left */
+        padding-top: 50px !important; /* Padding-top adicional do topo */
+        padding-bottom: 20px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-height: 100vh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
+        height: 100vh !important;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        max-height: 100vh !important;
+        max-height: calc(var(--vh, 1vh) * 100) !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
+    }
+    
+    /* Slide 8 mantém padding padrão - REGRAS MUITO ESPECÍFICAS */
+    section#section-8,
     #section-8 {
         padding: 20px 15px !important;
         padding-top: 20px !important;
@@ -608,6 +672,8 @@ body[style] {
         max-height: calc(var(--vh, 1vh) * 100) !important;
         overflow: hidden !important;
         box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
     }
 
     .panel {
@@ -978,14 +1044,64 @@ body[style] {
     }
     
     /* FORÇAR MESMO ESPAÇAMENTO PARA TODAS AS SEÇÕES NO MOBILE PEQUENO - ABSOLUTAMENTE UNIFORME */
-    .story-section,
+    .story-section {
+        padding: 20px 15px !important;
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-height: 100vh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
+        height: 100vh !important;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        max-height: 100vh !important;
+        max-height: calc(var(--vh, 1vh) * 100) !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* PADDING-TOP ADICIONAL PARA SLIDES 1-7 NO MOBILE PEQUENO - REGRAS MUITO ESPECÍFICAS */
+    section#section-1,
+    section#section-2,
+    section#section-3,
+    section#section-4,
+    section#section-5,
+    section#section-6,
+    section#section-7,
     #section-1,
     #section-2,
     #section-3,
     #section-4,
     #section-5,
     #section-6,
-    #section-7,
+    #section-7 {
+        padding: 50px 15px 20px 15px !important; /* padding: top right bottom left */
+        padding-top: 50px !important; /* Padding-top adicional do topo */
+        padding-bottom: 20px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-height: 100vh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
+        height: 100vh !important;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        max-height: 100vh !important;
+        max-height: calc(var(--vh, 1vh) * 100) !important;
+        box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
+    }
+    
+    /* Slide 8 mantém padding padrão - REGRAS MUITO ESPECÍFICAS */
+    section#section-8,
     #section-8 {
         padding: 20px 15px !important;
         padding-top: 20px !important;
@@ -1004,6 +1120,8 @@ body[style] {
         max-height: 100vh !important;
         max-height: calc(var(--vh, 1vh) * 100) !important;
         box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
     }
 
     .panel {
@@ -1241,5 +1359,51 @@ body[style] {
     #section-1 {
         justify-content: center !important;
         align-items: center !important;
+    }
+}
+
+/* ============================================
+   REGRAS FINAIS DE COMPATIBILIDADE - TODOS OS NAVEGADORES
+   Garantir que paddings sejam aplicados em TODOS os navegadores
+   ============================================ */
+
+/* Forçar padding-top para slides 1-7 no mobile - Compatibilidade máxima */
+@media (max-width: 768px) {
+    section.story-section#section-1,
+    section.story-section#section-2,
+    section.story-section#section-3,
+    section.story-section#section-4,
+    section.story-section#section-5,
+    section.story-section#section-6,
+    section.story-section#section-7,
+    .story-section#section-1,
+    .story-section#section-2,
+    .story-section#section-3,
+    .story-section#section-4,
+    .story-section#section-5,
+    .story-section#section-6,
+    .story-section#section-7 {
+        padding-top: 50px !important;
+        padding: 50px 15px 20px 15px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    section.story-section#section-1,
+    section.story-section#section-2,
+    section.story-section#section-3,
+    section.story-section#section-4,
+    section.story-section#section-5,
+    section.story-section#section-6,
+    section.story-section#section-7,
+    .story-section#section-1,
+    .story-section#section-2,
+    .story-section#section-3,
+    .story-section#section-4,
+    .story-section#section-5,
+    .story-section#section-6,
+    .story-section#section-7 {
+        padding-top: 50px !important;
+        padding: 50px 15px 20px 15px !important;
     }
 }
