@@ -949,33 +949,8 @@ section#section-8,
     }
 
     /* ============================================
-       MOBILE PEQUENO 480px - CENTRALIZAÇÃO SLIDE 1 E REDUÇÃO DOS DEMAIS
+       MOBILE PEQUENO 480px - REGRAS GERAIS
        ============================================ */
-    
-    
-    /* Slide 8 mantém padding padrão - REGRAS MUITO ESPECÍFICAS */
-    section#section-8,
-    #section-8 {
-        padding: 20px 15px !important;
-        padding-top: 20px !important;
-        padding-bottom: 20px !important;
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        margin: 0 !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        min-height: 100vh !important;
-        min-height: calc(var(--vh, 1vh) * 100) !important;
-        height: 100vh !important;
-        height: calc(var(--vh, 1vh) * 100) !important;
-        max-height: 100vh !important;
-        max-height: calc(var(--vh, 1vh) * 100) !important;
-        box-sizing: border-box !important;
-        -webkit-box-sizing: border-box !important;
-        -moz-box-sizing: border-box !important;
-    }
 
     .panel {
         min-height: auto;
@@ -1213,96 +1188,90 @@ section#section-8,
 }
 
 /* ============================================
-   REGRAS FINAIS MOBILE - MÁXIMA PRIORIDADE
+   REGRAS FINAIS MOBILE - MÁXIMA PRIORIDADE - ESPAÇAMENTO PADRONIZADO
    ============================================ */
 @media (max-width: 768px) {
-    /* SLIDE 1 - CENTRALIZADO COM PADDING-TOP MAIOR (REDUZIDO 20%) */
+    /* TODOS OS SLIDES (1-8) - PADDING PADRONIZADO */
     section#section-1.story-section,
-    .story-section#section-1,
-    #section-1 {
-        padding-top: 40px !important; /* Reduzido de 50px para 40px (20%) */
-        padding-bottom: 20px !important;
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        margin: 0 !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-    }
-    
-    /* SLIDES 2-7 - PADDING-TOP REDUZIDO PARA APROXIMAR (REDUZIDO 20%) */
     section#section-2.story-section,
     section#section-3.story-section,
     section#section-4.story-section,
     section#section-5.story-section,
     section#section-6.story-section,
     section#section-7.story-section,
+    section#section-8.story-section,
+    .story-section#section-1,
     .story-section#section-2,
     .story-section#section-3,
     .story-section#section-4,
     .story-section#section-5,
     .story-section#section-6,
     .story-section#section-7,
+    .story-section#section-8,
+    #section-1,
     #section-2,
     #section-3,
     #section-4,
     #section-5,
     #section-6,
-    #section-7 {
-        padding-top: 8px !important; /* Reduzido de 10px para 8px (20%) */
+    #section-7,
+    #section-8 {
+        padding-top: 20px !important; /* Espaçamento padrão para todos */
         padding-bottom: 20px !important;
         padding-left: 15px !important;
         padding-right: 15px !important;
         margin: 0 !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
+    }
+    
+    /* Garantir centralização do slide 1 */
+    #section-1 {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
 }
 
 @media (max-width: 480px) {
-    /* SLIDE 1 - CENTRALIZADO COM PADDING-TOP MAIOR (REDUZIDO 20%) */
+    /* TODOS OS SLIDES (1-8) - PADDING PADRONIZADO */
     section#section-1.story-section,
-    .story-section#section-1,
-    #section-1 {
-        padding-top: 36px !important; /* Reduzido de 45px para 36px (20%) */
-        padding-bottom: 20px !important;
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        margin: 0 !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-    }
-    
-    /* SLIDES 2-7 - PADDING-TOP REDUZIDO PARA APROXIMAR (REDUZIDO 20%) */
     section#section-2.story-section,
     section#section-3.story-section,
     section#section-4.story-section,
     section#section-5.story-section,
     section#section-6.story-section,
     section#section-7.story-section,
+    section#section-8.story-section,
+    .story-section#section-1,
     .story-section#section-2,
     .story-section#section-3,
     .story-section#section-4,
     .story-section#section-5,
     .story-section#section-6,
     .story-section#section-7,
+    .story-section#section-8,
+    #section-1,
     #section-2,
     #section-3,
     #section-4,
     #section-5,
     #section-6,
-    #section-7 {
-        padding-top: 4px !important; /* Reduzido de 5px para 4px (20%) */
+    #section-7,
+    #section-8 {
+        padding-top: 20px !important; /* Espaçamento padrão para todos */
         padding-bottom: 20px !important;
         padding-left: 15px !important;
         padding-right: 15px !important;
         margin: 0 !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
+    }
+    
+    /* Garantir centralização do slide 1 */
+    #section-1 {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
 }
