@@ -28,6 +28,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="loader.css">
     <link rel="stylesheet" href="style.css">
     <script>
         // Tratamento de erros globais para evitar erros de extensões do navegador
@@ -100,6 +102,54 @@
     </script>
 </head>
 <body>
+
+<!-- LOADER DE SEGURANÇA -->
+<div id="security-loader" class="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div class="text-center px-6 max-w-md w-full">
+        <!-- Logo -->
+        <div class="mb-8">
+            <img src="img/logo.png" alt="Logo" class="w-24 h-24 mx-auto drop-shadow-2xl loader-logo">
+        </div>
+        
+        <!-- Título -->
+        <h2 class="text-white text-2xl font-bold mb-2" style="font-family: 'Bangers', cursive; letter-spacing: 2px;">
+            CARREGANDO SEGURANÇA
+        </h2>
+        <p class="text-gray-400 text-sm mb-8">Preparando seu guia de proteção digital...</p>
+        
+        <!-- Barra de Progresso -->
+        <div class="relative w-full h-3 bg-gray-700 rounded-full overflow-hidden mb-4 shadow-inner">
+            <div id="progress-bar" class="progress-bar-fill h-full rounded-full transition-all duration-300 ease-out" style="width: 0%;"></div>
+        </div>
+        
+        <!-- Porcentagem -->
+        <div class="text-white text-lg font-bold mb-8">
+            <span id="progress-text">0</span>%
+        </div>
+        
+        <!-- Ícones de Segurança Animados -->
+        <div class="flex justify-center gap-6 mb-4">
+            <div id="icon-1" class="security-icon text-3xl text-gray-600">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <div id="icon-2" class="security-icon text-3xl text-gray-600">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div id="icon-3" class="security-icon text-3xl text-gray-600">
+                <i class="fas fa-key"></i>
+            </div>
+            <div id="icon-4" class="security-icon text-3xl text-gray-600">
+                <i class="fas fa-mobile-screen-button"></i>
+            </div>
+            <div id="icon-5" class="security-icon text-3xl text-gray-600">
+                <i class="fas fa-fingerprint"></i>
+            </div>
+        </div>
+        
+        <!-- Mensagem de Status -->
+        <p id="status-text" class="text-gray-500 text-xs">Inicializando...</p>
+    </div>
+</div>
 
 <!-- LOADING - ESTILO HQ (DESABILITADO TEMPORARIAMENTE) -->
 <!--
@@ -351,6 +401,7 @@
     <p class="footer-text">© 2025 Criado no Laboratório de Tecnologia da Dream Factory - Todos os direitos reservados</p>
 </footer>-->
 
+<script src="loader.js"></script>
 <script src="script.js"></script>
 
 </body>
