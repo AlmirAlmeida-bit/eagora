@@ -4,15 +4,34 @@
 // Otimizado para mobile
 // ============================================
 
-// Aguardar DOM e GSAP estarem carregados
+// Aguardar DOM, GSAP e LOADER estarem carregados
 (function() {
     'use strict';
+    
+    // Variável para controlar se o loader já terminou
+    let loaderCompleted = false;
+    
+    // Aguardar evento do loader
+    window.addEventListener('loaderComplete', () => {
+        loaderCompleted = true;
+        console.log('✅ Loader completo! Iniciando aplicação principal...');
+        // Se GSAP já estiver carregado, iniciar agora
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            initializeApp();
+        }
+    });
     
     // Função para inicializar quando tudo estiver pronto
     let retryCount = 0;
     const MAX_RETRIES = 50; // Tentar por até 5 segundos (50 * 100ms)
     
     function initializeApp() {
+        // NÃO INICIAR SE LOADER AINDA NÃO TERMINOU
+        if (!loaderCompleted) {
+            console.log('⏳ Aguardando loader finalizar...');
+            return;
+        }
+        
         // Verificar se GSAP está disponível
         if (typeof gsap === 'undefined') {
             retryCount++;
@@ -429,20 +448,7 @@
                 invalidateOnRefresh: true,
                 preventOverlaps: true,
                 markers: false, // Desabilitar markers para melhor performance
-                anticipatePin: 1, // Antecipar pin para suavidade
-                // onLeaveBack simplificado - força timeline a voltar ao início
-                onLeaveBack: () => {
-                    // Usar requestAnimationFrame para suavizar a transição
-                    requestAnimationFrame(() => {
-                        tl.progress(0);
-                    });
-                },
-                // onEnterBack - garante estado final correto ao rolar para baixo novamente
-                onEnterBack: () => {
-                    requestAnimationFrame(() => {
-                        tl.progress(1);
-                    });
-                }
+                anticipatePin: 1 // Antecipar pin para suavidade
             }
         });
         
@@ -749,18 +755,7 @@
             animation: tl8, // Usar timeline criada
             invalidateOnRefresh: true, // Garantir recálculo suave
             anticipatePin: 1, // Antecipar pin para suavidade
-            markers: false, // Desabilitar markers para melhor performance
-            // Callbacks simplificados com requestAnimationFrame
-            onLeaveBack: () => {
-                requestAnimationFrame(() => {
-                    tl8.progress(0);
-                });
-            },
-            onEnterBack: () => {
-                requestAnimationFrame(() => {
-                    tl8.progress(1);
-                });
-            }
+            markers: false // Desabilitar markers para melhor performance
         });
     }
     
@@ -963,8 +958,10 @@
         // ============================================
         // EXECUTAR QUANDO DOM ESTIVER PRONTO
         // ============================================
-        // Inicializar aplicação
-        init();
+        // Inicializar aplicação SOMENTE SE LOADER JÁ TERMINOU
+        if (loaderCompleted) {
+            init();
+        }
         
         // Garantir scroll no topo quando página carregar
         window.addEventListener('load', () => {
@@ -973,12 +970,6 @@
         });
     }
     
-    // Inicializar quando tudo estiver pronto
-    if (document.readyState === 'loading') {
-        // DOM ainda carregando, aguardar
-        document.addEventListener('DOMContentLoaded', initializeApp);
-    } else {
-        // DOM já carregado, verificar GSAP
-        initializeApp();
-    }
+    // NÃO inicializar automaticamente - aguardar evento loaderComplete
+    // O evento 'loaderComplete' irá chamar initializeApp() quando o loader terminar
 })();
